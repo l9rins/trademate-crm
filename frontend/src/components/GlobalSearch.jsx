@@ -1,0 +1,99 @@
+"use client"
+
+import * as React from "react"
+import {
+    CalendarIcon,
+    EnvelopeClosedIcon,
+    FaceIcon,
+    GearIcon,
+    PersonIcon,
+    RocketIcon,
+} from "@radix-ui/react-icons" // Or lucide-react if installed, I'll stick to Lucide.
+// Wait, I installed lucide-react. CMDK examples use radix icons often but I should use my lucide.
+import {
+    Calendar,
+    Smile,
+    Calculator,
+    User,
+    CreditCard,
+    Settings,
+} from "lucide-react"
+
+import {
+    CommandDialog,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+    CommandSeparator,
+    CommandShortcut,
+} from "@/components/ui/command"
+
+export function GlobalSearch() {
+    const [open, setOpen] = React.useState(false)
+
+    React.useEffect(() => {
+        const down = (e) => {
+            if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault()
+                setOpen((open) => !open)
+            }
+        }
+
+        document.addEventListener("keydown", down)
+        return () => document.removeEventListener("keydown", down)
+    }, [])
+
+    return (
+        <>
+            <div className="relative w-full max-w-sm ml-auto hidden md:block">
+                <p className="text-sm text-muted-foreground cursor-pointer border rounded-md px-4 py-2 flex justify-between items-center" onClick={() => setOpen(true)}>
+                    <span>Search...</span>
+                    <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+                        <span className="text-xs">⌘</span>K
+                    </kbd>
+                </p>
+            </div>
+
+            <CommandDialog open={open} onOpenChange={setOpen}>
+                <CommandInput placeholder="Type a command or search..." />
+                <CommandList>
+                    <CommandEmpty>No results found.</CommandEmpty>
+                    <CommandGroup heading="Suggestions">
+                        <CommandItem>
+                            <Calendar className="mr-2 h-4 w-4" />
+                            <span>Calendar</span>
+                        </CommandItem>
+                        <CommandItem>
+                            <Smile className="mr-2 h-4 w-4" />
+                            <span>Search Emoji</span>
+                        </CommandItem>
+                        <CommandItem>
+                            <Calculator className="mr-2 h-4 w-4" />
+                            <span>Calculator</span>
+                        </CommandItem>
+                    </CommandGroup>
+                    <CommandSeparator />
+                    <CommandGroup heading="Settings">
+                        <CommandItem>
+                            <User className="mr-2 h-4 w-4" />
+                            <span>Profile</span>
+                            <CommandShortcut>⌘P</CommandShortcut>
+                        </CommandItem>
+                        <CommandItem>
+                            <CreditCard className="mr-2 h-4 w-4" />
+                            <span>Billing</span>
+                            <CommandShortcut>⌘B</CommandShortcut>
+                        </CommandItem>
+                        <CommandItem>
+                            <Settings className="mr-2 h-4 w-4" />
+                            <span>Settings</span>
+                            <CommandShortcut>⌘S</CommandShortcut>
+                        </CommandItem>
+                    </CommandGroup>
+                </CommandList>
+            </CommandDialog>
+        </>
+    )
+}
