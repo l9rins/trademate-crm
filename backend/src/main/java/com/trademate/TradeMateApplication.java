@@ -7,6 +7,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class TradeMateApplication {
 
     public static void main(String[] args) {
+        // Render Patch: Auto-correct postgres:// to jdbc:postgresql://
+        String dbUrl = System.getenv("SPRING_DATASOURCE_URL");
+        if (dbUrl != null && dbUrl.startsWith("postgres://")) {
+            System.out.println("Applying Render JDBC URL patch...");
+            System.setProperty("spring.datasource.url", "jdbc:" + dbUrl);
+        }
         SpringApplication.run(TradeMateApplication.class, args);
     }
 
