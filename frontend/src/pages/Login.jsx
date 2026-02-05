@@ -49,106 +49,85 @@ export default function Login() {
     });
 
     return (
-        <div className="relative flex items-center justify-center min-h-screen bg-[#020202] overflow-hidden selection:bg-primary/30">
-            {/* High-Performance Decorative Gradients */}
-            <div className="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
-                <div className="absolute -top-[10%] -right-[10%] w-[50%] h-[50%] bg-primary/10 blur-[120px] rounded-full animate-pulse" />
-                <div className="absolute -bottom-[10%] -left-[10%] w-[50%] h-[50%] bg-emerald-500/5 blur-[120px] rounded-full" />
-            </div>
-
-            <Card className="w-[440px] border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] glass-card rounded-[2.5rem] overflow-hidden relative">
-                <div className="absolute top-0 left-0 w-full h-1 bg-cryshield-gradient" />
-
-                <CardHeader className="space-y-4 pb-10 px-10 pt-12 text-center">
-                    <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-primary shadow-[0_0_30px_rgba(6,182,212,0.4)] mb-2 group transition-transform hover:scale-105 duration-500">
-                        <span className="text-5xl font-black italic tracking-tighter text-white">T</span>
+        <div className="relative flex items-center justify-center min-h-screen bg-slate-50/50 overflow-hidden">
+            <Card className="w-[420px] border-slate-100 shadow-xl rounded-2xl overflow-hidden bg-white">
+                <CardHeader className="space-y-6 pb-8 px-8 pt-10">
+                    <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-r from-teal-400 to-emerald-500 text-white font-black italic shadow-lg shadow-teal-500/20">
+                            T
+                        </div>
+                        <span className="text-xl font-bold tracking-tight text-slate-800">TradeMate</span>
                     </div>
-                    <div className="space-y-1">
-                        <CardTitle className="text-4xl font-black tracking-tighter text-white uppercase flex items-center justify-center gap-2">
-                            VAULT <span className="text-primary italic">ACCESS</span>
-                        </CardTitle>
-                        <CardDescription className="text-primary/70 font-black uppercase tracking-[0.3em] text-[9px] mt-2">
-                            SECURE SESSION INITIALIZATION
+                    <div className="space-y-1.5">
+                        <CardTitle className="text-2xl font-bold tracking-tight text-slate-900">Welcome Back</CardTitle>
+                        <CardDescription className="text-slate-500 text-sm">
+                            Enter your credentials to access your workspace.
                         </CardDescription>
                     </div>
                 </CardHeader>
 
-                <CardContent className="px-10">
-                    <form onSubmit={formik.handleSubmit} className="space-y-8">
-                        <div className="space-y-6">
-                            <div className="space-y-3">
-                                <Label htmlFor="username" className="text-[10px] font-black uppercase tracking-[0.25em] text-white/70 pl-1">Identity Vector</Label>
-                                <div className="relative group">
-                                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                                        <User className="h-4.5 w-4.5 text-primary transition-all group-focus-within:scale-110" />
-                                    </div>
-                                    <Input
-                                        id="username"
-                                        placeholder="Enter Identity"
-                                        className="pl-12 h-14 bg-white/5 border-white/10 rounded-2xl focus:bg-white/10 transition-all focus:ring-1 focus:ring-primary/40 font-bold text-white placeholder:text-white/20 text-md"
-                                        {...formik.getFieldProps('username')}
-                                    />
-                                </div>
+                <CardContent className="px-8">
+                    <form onSubmit={formik.handleSubmit} className="space-y-5">
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="username" className="text-xs font-semibold text-slate-600 pl-0.5">Email Address</Label>
+                                <Input
+                                    id="username"
+                                    type="text"
+                                    placeholder="name@company.com"
+                                    className="h-11 bg-white border-slate-200 rounded-lg focus:ring-teal-500 focus:border-teal-500 transition-all font-medium text-slate-900 placeholder:text-slate-400"
+                                    {...formik.getFieldProps('username')}
+                                />
                                 {formik.touched.username && formik.errors.username && (
-                                    <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest pl-2 animate-in slide-in-from-left-2">{formik.errors.username}</p>
+                                    <p className="text-xs font-medium text-rose-500 pl-0.5">{formik.errors.username}</p>
                                 )}
                             </div>
 
-                            <div className="space-y-3">
-                                <div className="flex items-center justify-between">
-                                    <Label htmlFor="password" className="text-[10px] font-black uppercase tracking-[0.25em] text-white/70 pl-1">Auth Token</Label>
-                                    <a href="#" className="text-[10px] font-black text-primary hover:text-emerald-400 uppercase tracking-widest transition-colors animate-pulse">RECOVER?</a>
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between px-0.5">
+                                    <Label htmlFor="password" className="text-xs font-semibold text-slate-600">Password</Label>
+                                    <a href="#" className="text-xs font-semibold text-teal-600 hover:text-teal-700 transition-colors">Forgot password?</a>
                                 </div>
-                                <div className="relative group">
-                                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                                        <Lock className="h-4.5 w-4.5 text-primary transition-all group-focus-within:scale-110" />
-                                    </div>
-                                    <Input
-                                        id="password"
-                                        type="password"
-                                        placeholder="••••••••"
-                                        className="pl-12 h-14 bg-white/5 border-white/10 rounded-2xl focus:bg-white/10 transition-all focus:ring-1 focus:ring-primary/40 font-bold text-white placeholder:text-white/20 text-md"
-                                        {...formik.getFieldProps('password')}
-                                    />
-                                </div>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    placeholder="••••••••"
+                                    className="h-11 bg-white border-slate-200 rounded-lg focus:ring-teal-500 focus:border-teal-500 transition-all font-medium text-slate-900 placeholder:text-slate-400"
+                                    {...formik.getFieldProps('password')}
+                                />
                                 {formik.touched.password && formik.errors.password && (
-                                    <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest pl-2 animate-in slide-in-from-left-2">{formik.errors.password}</p>
+                                    <p className="text-xs font-medium text-rose-500 pl-0.5">{formik.errors.password}</p>
                                 )}
                             </div>
                         </div>
 
                         <Button
                             type="submit"
-                            className="w-full h-14 rounded-2xl text-[12px] font-black uppercase tracking-[0.3em] bg-cryshield-gradient hover:opacity-90 shadow-[0_0_40px_rgba(6,182,212,0.2)] transition-all border-0 group relative overflow-hidden"
+                            className="w-full h-11 rounded-xl text-sm font-bold bg-gradient-to-r from-teal-400 to-emerald-500 hover:opacity-90 shadow-lg shadow-teal-500/20 transition-all border-0 text-white mt-2"
                             disabled={formik.isSubmitting}
                         >
-                            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            {formik.isSubmitting ? "SYNCHRONIZING..." : (
-                                <span className="flex items-center justify-center gap-3 relative z-10 text-white">
-                                    ESTABLISH LINK <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform" />
-                                </span>
-                            )}
+                            {formik.isSubmitting ? "Signing In..." : "Sign In"}
                         </Button>
                     </form>
                 </CardContent>
 
-                <CardFooter className="flex flex-col gap-6 pb-12 pt-6 px-10">
-                    <div className="flex items-center gap-4 w-full px-4">
-                        <div className="h-[1px] bg-white/10 flex-1" />
-                        <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">NEW NODE?</span>
-                        <div className="h-[1px] bg-white/10 flex-1" />
+                <CardFooter className="flex flex-col gap-4 pb-10 pt-6 px-8">
+                    <div className="flex items-center gap-3 w-full">
+                        <div className="h-[1px] bg-slate-100 flex-1" />
+                        <span className="text-xs font-medium text-slate-400">or</span>
+                        <div className="h-[1px] bg-slate-100 flex-1" />
                     </div>
-                    <Link to="/register" className="w-full">
-                        <Button variant="outline" className="w-full h-14 rounded-2xl text-[11px] font-black text-white/70 hover:text-white hover:bg-white/5 transition-all uppercase tracking-[0.3em] border-white/10 bg-transparent">
-                            PROVISION NEW ENTRY
-                        </Button>
-                    </Link>
+                    <div className="text-center w-full">
+                        <p className="text-sm text-slate-500">
+                            Don't have an account? <Link to="/register" className="font-semibold text-teal-600 hover:text-teal-700 transition-colors">Sign up</Link>
+                        </p>
+                    </div>
                 </CardFooter>
             </Card>
 
             <div className="absolute bottom-8 left-0 right-0 text-center">
-                <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.6em]">
-                    &copy; 2026 CRYSHIELD PROTOCOL &bull; SECURE WORKSPACE DIVISION
+                <p className="text-xs font-medium text-slate-400">
+                    &copy; 2026 TradeMate CRM &bull; Clean SaaS Division
                 </p>
             </div>
         </div>

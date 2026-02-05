@@ -24,12 +24,11 @@ export default function Register() {
         try {
             await register(values.username, values.email, values.password);
             toast.success("Account created!", {
-                description: "Welcome to the premium TradeMate workspace.",
+                description: "Welcome to the TradeMate workspace.",
             });
             navigate('/');
         } catch (err) {
             const errorMessage = err.response?.data?.error || 'Registration failed. Username or Email may be taken.';
-            setError(errorMessage);
             toast.error("Registration failed", {
                 description: errorMessage,
             });
@@ -51,118 +50,95 @@ export default function Register() {
     });
 
     return (
-        <div className="relative flex items-center justify-center min-h-screen bg-[#020202] overflow-hidden selection:bg-primary/30 text-white">
-            {/* High-Performance Decorative Gradients */}
-            <div className="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
-                <div className="absolute -top-[10%] -left-[10%] w-[50%] h-[50%] bg-primary/10 blur-[120px] rounded-full animate-pulse" />
-                <div className="absolute -bottom-[10%] -right-[10%] w-[50%] h-[50%] bg-emerald-500/5 blur-[120px] rounded-full" />
-            </div>
-
-            <Card className="w-[500px] border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] glass-card rounded-[2.5rem] overflow-hidden relative">
-                <div className="absolute top-0 left-0 w-full h-1 bg-cryshield-gradient" />
-
-                <CardHeader className="space-y-4 pb-10 px-10 pt-12 text-center">
-                    <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-primary shadow-[0_0_30px_rgba(6,182,212,0.4)] mb-2 group transition-transform hover:scale-105 duration-500">
-                        <UserPlus className="h-10 w-10 text-white" />
+        <div className="relative flex items-center justify-center min-h-screen bg-slate-50/50 overflow-hidden text-slate-900">
+            <Card className="w-[460px] border-slate-100 shadow-xl rounded-2xl overflow-hidden bg-white">
+                <CardHeader className="space-y-6 pb-8 px-8 pt-10">
+                    <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-r from-teal-400 to-emerald-500 text-white font-black italic shadow-lg shadow-teal-500/20">
+                            T
+                        </div>
+                        <span className="text-xl font-bold tracking-tight text-slate-800">TradeMate</span>
                     </div>
-                    <div className="space-y-1">
-                        <CardTitle className="text-4xl font-black tracking-tighter text-white uppercase flex items-center justify-center gap-2">
-                            ACCESS <span className="text-primary italic">REQUEST</span>
-                        </CardTitle>
-                        <CardDescription className="text-primary/70 font-black uppercase tracking-[0.3em] text-[9px] mt-2">
-                            INITIALIZE PROFILE: CRYSHIELD PROTOCOL
+                    <div className="space-y-1.5">
+                        <CardTitle className="text-2xl font-bold tracking-tight text-slate-900">Create Account</CardTitle>
+                        <CardDescription className="text-slate-500 text-sm">
+                            Join the workspace and start managing your business.
                         </CardDescription>
                     </div>
                 </CardHeader>
 
-                <CardContent className="px-10">
-                    <form onSubmit={formik.handleSubmit} className="space-y-6">
-                        <div className="space-y-5">
-                            <div className="space-y-3">
-                                <Label htmlFor="username" className="text-[10px] font-black uppercase tracking-[0.25em] text-white/70 pl-2">Preferred Alias</Label>
-                                <div className="relative group">
-                                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                                        <User className="h-4.5 w-4.5 text-primary transition-all group-focus-within:scale-110" />
-                                    </div>
-                                    <Input
-                                        id="username"
-                                        placeholder="lorenz_admin"
-                                        className="pl-12 h-14 bg-white/5 border-white/10 rounded-2xl focus:bg-white/10 transition-all focus:ring-1 focus:ring-primary/40 font-bold text-white placeholder:text-white/20 text-md"
-                                        {...formik.getFieldProps('username')}
-                                    />
-                                </div>
+                <CardContent className="px-8">
+                    <form onSubmit={formik.handleSubmit} className="space-y-5">
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="username" className="text-xs font-semibold text-slate-600 pl-0.5">Username</Label>
+                                <Input
+                                    id="username"
+                                    placeholder="lorenz_admin"
+                                    className="h-11 bg-white border-slate-200 rounded-lg focus:ring-teal-500 focus:border-teal-500 transition-all font-medium text-slate-900 placeholder:text-slate-400"
+                                    {...formik.getFieldProps('username')}
+                                />
                                 {formik.touched.username && formik.errors.username && (
-                                    <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest pl-2 animate-in slide-in-from-left-2">{formik.errors.username}</p>
+                                    <p className="text-xs font-medium text-rose-500 pl-0.5">{formik.errors.username}</p>
                                 )}
                             </div>
 
-                            <div className="space-y-3">
-                                <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-[0.25em] text-white/70 pl-2">Secure Channel</Label>
-                                <div className="relative group">
-                                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                                        <Mail className="h-4.5 w-4.5 text-primary transition-all group-focus-within:scale-110" />
-                                    </div>
-                                    <Input
-                                        id="email"
-                                        type="email"
-                                        placeholder="lorenz@secure.vault"
-                                        className="pl-12 h-14 bg-white/5 border-white/10 rounded-2xl focus:bg-white/10 transition-all focus:ring-1 focus:ring-primary/40 font-bold text-white placeholder:text-white/20 text-md"
-                                        {...formik.getFieldProps('email')}
-                                    />
-                                </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="email" className="text-xs font-semibold text-slate-600 pl-0.5">Email Address</Label>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    placeholder="name@company.com"
+                                    className="h-11 bg-white border-slate-200 rounded-lg focus:ring-teal-500 focus:border-teal-500 transition-all font-medium text-slate-900 placeholder:text-slate-400"
+                                    {...formik.getFieldProps('email')}
+                                />
                                 {formik.touched.email && formik.errors.email && (
-                                    <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest pl-2 animate-in slide-in-from-left-2">{formik.errors.email}</p>
+                                    <p className="text-xs font-medium text-rose-500 pl-0.5">{formik.errors.email}</p>
                                 )}
                             </div>
 
-                            <div className="space-y-3">
-                                <Label htmlFor="password" className="text-[10px] font-black uppercase tracking-[0.25em] text-white/70 pl-2">Unique Keyphrase</Label>
-                                <div className="relative group">
-                                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                                        <Lock className="h-4.5 w-4.5 text-primary transition-all group-focus-within:scale-110" />
-                                    </div>
-                                    <Input
-                                        id="password"
-                                        type="password"
-                                        placeholder="••••••••"
-                                        className="pl-12 h-14 bg-white/5 border-white/10 rounded-2xl focus:bg-white/10 transition-all focus:ring-1 focus:ring-primary/40 font-bold text-white placeholder:text-white/20 text-md"
-                                        {...formik.getFieldProps('password')}
-                                    />
-                                </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="password" className="text-xs font-semibold text-slate-600 pl-0.5">Password</Label>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    placeholder="••••••••"
+                                    className="h-11 bg-white border-slate-200 rounded-lg focus:ring-teal-500 focus:border-teal-500 transition-all font-medium text-slate-900 placeholder:text-slate-400"
+                                    {...formik.getFieldProps('password')}
+                                />
                                 {formik.touched.password && formik.errors.password && (
-                                    <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest pl-2 animate-in slide-in-from-left-2">{formik.errors.password}</p>
+                                    <p className="text-xs font-medium text-rose-500 pl-0.5">{formik.errors.password}</p>
                                 )}
                             </div>
                         </div>
 
                         <Button
                             type="submit"
-                            className="w-full h-14 rounded-2xl text-[12px] font-black uppercase tracking-[0.3em] bg-cryshield-gradient hover:opacity-90 shadow-[0_0_40px_rgba(6,182,212,0.2)] transition-all border-0 group relative overflow-hidden mt-4"
+                            className="w-full h-11 rounded-xl text-sm font-bold bg-gradient-to-r from-teal-400 to-emerald-500 hover:opacity-90 shadow-lg shadow-teal-500/20 transition-all border-0 text-white mt-4"
                             disabled={formik.isSubmitting}
                         >
-                            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            {formik.isSubmitting ? "PROVISIONING..." : "INITIALIZE ONBOARDING"}
+                            {formik.isSubmitting ? "Creating Account..." : "Create Account"}
                         </Button>
                     </form>
                 </CardContent>
 
-                <CardFooter className="flex flex-col gap-6 pb-12 pt-8 px-10">
-                    <div className="flex items-center gap-4 w-full px-4">
-                        <div className="h-[1px] bg-white/10 flex-1" />
-                        <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">ESTABLISHED?</span>
-                        <div className="h-[1px] bg-white/10 flex-1" />
+                <CardFooter className="flex flex-col gap-4 pb-10 pt-8 px-8">
+                    <div className="flex items-center gap-3 w-full">
+                        <div className="h-[1px] bg-slate-100 flex-1" />
+                        <span className="text-xs font-medium text-slate-400">or</span>
+                        <div className="h-[1px] bg-slate-100 flex-1" />
                     </div>
-                    <Link to="/login" className="w-full">
-                        <Button variant="outline" className="w-full h-14 rounded-2xl text-[11px] font-black text-white/70 hover:text-white hover:bg-white/5 transition-all uppercase tracking-[0.3em] border-white/10 bg-transparent">
-                            RETURN TO SECURE VAULT
-                        </Button>
-                    </Link>
+                    <div className="text-center w-full">
+                        <p className="text-sm text-slate-500">
+                            Already have an account? <Link to="/login" className="font-semibold text-teal-600 hover:text-teal-700 transition-colors">Sign in</Link>
+                        </p>
+                    </div>
                 </CardFooter>
             </Card>
 
             <div className="absolute bottom-8 left-0 right-0 text-center">
-                <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.6em]">
-                    &copy; 2026 CRYSHIELD PROTOCOL &bull; SECURE WORKSPACE DIVISION
+                <p className="text-xs font-medium text-slate-400">
+                    &copy; 2026 TradeMate CRM &bull; Clean SaaS Division
                 </p>
             </div>
         </div>
