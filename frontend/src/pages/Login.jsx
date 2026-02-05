@@ -49,91 +49,106 @@ export default function Login() {
     });
 
     return (
-        <div className="relative flex items-center justify-center min-h-screen bg-[#050505] overflow-hidden transition-colors duration-500">
-            {/* Mesh Gradient Background */}
-            <div className="absolute inset-0 -z-10 bg-[radial-gradient(45%_40%_at_50%_50%,rgba(6,182,212,0.1)_0%,rgba(0,0,0,0)_100%)] opacity-70" />
-            <div className="absolute inset-0 -z-10 bg-[radial-gradient(35%_30%_at_80%_20%,rgba(34,197,94,0.05)_0%,rgba(0,0,0,0)_100%)] opacity-50" />
+        <div className="relative flex items-center justify-center min-h-screen bg-[#020202] overflow-hidden selection:bg-primary/30">
+            {/* High-Performance Decorative Gradients */}
+            <div className="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden">
+                <div className="absolute -top-[10%] -right-[10%] w-[50%] h-[50%] bg-primary/10 blur-[120px] rounded-full animate-pulse" />
+                <div className="absolute -bottom-[10%] -left-[10%] w-[50%] h-[50%] bg-emerald-500/5 blur-[120px] rounded-full" />
+            </div>
 
-            <Card className="w-[420px] border-white/5 shadow-2xl glass-card rounded-[2rem] overflow-hidden">
-                <div className="h-1.5 bg-cryshield-gradient shadow-[0_0_20px_rgba(6,182,212,0.3)]" />
-                <CardHeader className="space-y-2 pb-10 px-10 pt-10 text-center">
-                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary mb-6 shadow-inner shadow-primary/20 scale-110">
-                        <span className="text-4xl font-black italic tracking-tighter">T</span>
+            <Card className="w-[440px] border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] glass-card rounded-[2.5rem] overflow-hidden relative">
+                <div className="absolute top-0 left-0 w-full h-1 bg-cryshield-gradient" />
+
+                <CardHeader className="space-y-4 pb-10 px-10 pt-12 text-center">
+                    <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-primary shadow-[0_0_30px_rgba(6,182,212,0.4)] mb-2 group transition-transform hover:scale-105 duration-500">
+                        <span className="text-5xl font-black italic tracking-tighter text-white">T</span>
                     </div>
-                    <CardTitle className="text-4xl font-black tracking-tighter text-foreground uppercase">Vault <span className="text-primary italic">Access</span></CardTitle>
-                    <CardDescription className="text-muted-foreground font-bold uppercase tracking-widest text-[10px] opacity-60 mt-2">
-                        Initialize Session: <span className="text-primary">Cryshield Secure</span>
-                    </CardDescription>
+                    <div className="space-y-1">
+                        <CardTitle className="text-4xl font-black tracking-tighter text-white uppercase flex items-center justify-center gap-2">
+                            VAULT <span className="text-primary italic">ACCESS</span>
+                        </CardTitle>
+                        <CardDescription className="text-primary/70 font-black uppercase tracking-[0.3em] text-[9px] mt-2">
+                            SECURE SESSION INITIALIZATION
+                        </CardDescription>
+                    </div>
                 </CardHeader>
+
                 <CardContent className="px-10">
                     <form onSubmit={formik.handleSubmit} className="space-y-8">
-                        <div className="space-y-5">
-                            <div className="space-y-2.5">
-                                <Label htmlFor="username" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 pl-1">Identity Vector</Label>
+                        <div className="space-y-6">
+                            <div className="space-y-3">
+                                <Label htmlFor="username" className="text-[10px] font-black uppercase tracking-[0.25em] text-white/70 pl-1">Identity Vector</Label>
                                 <div className="relative group">
-                                    <User className="absolute left-4 top-3.5 h-4 w-4 text-primary opacity-50 transition-all group-focus-within:opacity-100 group-focus-within:scale-110" />
+                                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                                        <User className="h-4.5 w-4.5 text-primary transition-all group-focus-within:scale-110" />
+                                    </div>
                                     <Input
                                         id="username"
                                         placeholder="Enter Identity"
-                                        className="pl-12 h-12 bg-white/5 border-white/5 rounded-xl focus:bg-white/10 transition-all focus:ring-2 focus:ring-primary/20 font-bold"
+                                        className="pl-12 h-14 bg-white/5 border-white/10 rounded-2xl focus:bg-white/10 transition-all focus:ring-1 focus:ring-primary/40 font-bold text-white placeholder:text-white/20 text-md"
                                         {...formik.getFieldProps('username')}
                                     />
                                 </div>
                                 {formik.touched.username && formik.errors.username && (
-                                    <p className="text-[9px] font-black text-rose-500 uppercase tracking-widest pl-2">{formik.errors.username}</p>
+                                    <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest pl-2 animate-in slide-in-from-left-2">{formik.errors.username}</p>
                                 )}
                             </div>
-                            <div className="space-y-2.5">
+
+                            <div className="space-y-3">
                                 <div className="flex items-center justify-between">
-                                    <Label htmlFor="password" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 pl-1">Auth Token</Label>
-                                    <a href="#" className="text-[9px] font-black text-primary hover:text-accent uppercase tracking-widest transition-colors">Recover?</a>
+                                    <Label htmlFor="password" className="text-[10px] font-black uppercase tracking-[0.25em] text-white/70 pl-1">Auth Token</Label>
+                                    <a href="#" className="text-[10px] font-black text-primary hover:text-emerald-400 uppercase tracking-widest transition-colors animate-pulse">RECOVER?</a>
                                 </div>
                                 <div className="relative group">
-                                    <Lock className="absolute left-4 top-3.5 h-4 w-4 text-primary opacity-50 transition-all group-focus-within:opacity-100 group-focus-within:scale-110" />
+                                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                                        <Lock className="h-4.5 w-4.5 text-primary transition-all group-focus-within:scale-110" />
+                                    </div>
                                     <Input
                                         id="password"
                                         type="password"
                                         placeholder="••••••••"
-                                        className="pl-12 h-12 bg-white/5 border-white/5 rounded-xl focus:bg-white/10 transition-all focus:ring-2 focus:ring-primary/20 font-bold"
+                                        className="pl-12 h-14 bg-white/5 border-white/10 rounded-2xl focus:bg-white/10 transition-all focus:ring-1 focus:ring-primary/40 font-bold text-white placeholder:text-white/20 text-md"
                                         {...formik.getFieldProps('password')}
                                     />
                                 </div>
                                 {formik.touched.password && formik.errors.password && (
-                                    <p className="text-[9px] font-black text-rose-500 uppercase tracking-widest pl-2">{formik.errors.password}</p>
+                                    <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest pl-2 animate-in slide-in-from-left-2">{formik.errors.password}</p>
                                 )}
                             </div>
                         </div>
 
                         <Button
                             type="submit"
-                            className="w-full h-12 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] bg-cryshield-gradient hover:opacity-90 shadow-2xl shadow-primary/20 transition-all border-0 group"
+                            className="w-full h-14 rounded-2xl text-[12px] font-black uppercase tracking-[0.3em] bg-cryshield-gradient hover:opacity-90 shadow-[0_0_40px_rgba(6,182,212,0.2)] transition-all border-0 group relative overflow-hidden"
                             disabled={formik.isSubmitting}
                         >
-                            {formik.isSubmitting ? "Sychronizing..." : (
-                                <span className="flex items-center justify-center gap-3">
-                                    Establish Link <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            {formik.isSubmitting ? "SYNCHRONIZING..." : (
+                                <span className="flex items-center justify-center gap-3 relative z-10 text-white">
+                                    ESTABLISH LINK <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform" />
                                 </span>
                             )}
                         </Button>
                     </form>
                 </CardContent>
-                <CardFooter className="flex flex-col gap-6 pb-10 pt-4 px-10">
-                    <div className="flex items-center gap-3 w-full">
-                        <div className="h-[1px] bg-white/5 flex-1" />
-                        <span className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">External Node?</span>
-                        <div className="h-[1px] bg-white/5 flex-1" />
+
+                <CardFooter className="flex flex-col gap-6 pb-12 pt-6 px-10">
+                    <div className="flex items-center gap-4 w-full px-4">
+                        <div className="h-[1px] bg-white/10 flex-1" />
+                        <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">NEW NODE?</span>
+                        <div className="h-[1px] bg-white/10 flex-1" />
                     </div>
                     <Link to="/register" className="w-full">
-                        <Button variant="ghost" className="w-full h-12 rounded-xl text-[10px] font-black text-muted-foreground/60 hover:text-primary hover:bg-white/5 transition-all uppercase tracking-widest border border-white/5">
-                            Provision New Entry
+                        <Button variant="outline" className="w-full h-14 rounded-2xl text-[11px] font-black text-white/70 hover:text-white hover:bg-white/5 transition-all uppercase tracking-[0.3em] border-white/10 bg-transparent">
+                            PROVISION NEW ENTRY
                         </Button>
                     </Link>
                 </CardFooter>
             </Card>
 
             <div className="absolute bottom-8 left-0 right-0 text-center">
-                <p className="text-[9px] font-black text-muted-foreground/30 uppercase tracking-[0.5em]">
-                    &copy; 2026 Cryshield Protocol &bull; Secure Workspace Division
+                <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.6em]">
+                    &copy; 2026 CRYSHIELD PROTOCOL &bull; SECURE WORKSPACE DIVISION
                 </p>
             </div>
         </div>
