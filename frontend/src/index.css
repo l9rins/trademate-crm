@@ -96,34 +96,34 @@
     }
 
     .dark {
-        --background: 222 47% 4%;
-        --foreground: 213 31% 91%;
-        --card: 222 47% 6%;
-        --card-foreground: 213 31% 91%;
-        --popover: 222 47% 4%;
-        --popover-foreground: 213 31% 91%;
+        --background: 222 47% 11%;
+        --foreground: 210 40% 98%;
+        --card: 217 33% 17%;
+        --card-foreground: 210 40% 98%;
+        --popover: 217 33% 17%;
+        --popover-foreground: 210 40% 98%;
         --primary: 187 100% 42%;
-        --primary-foreground: 222 47% 4%;
-        --secondary: 222 40% 12%;
-        --secondary-foreground: 213 31% 91%;
-        --muted: 222 40% 12%;
-        --muted-foreground: 215.4 16.3% 66.9%;
+        --primary-foreground: 222 47% 11%;
+        --secondary: 217 33% 15%;
+        --secondary-foreground: 210 40% 98%;
+        --muted: 217 33% 15%;
+        --muted-foreground: 215 20% 65%;
         --accent: 55 100% 50%;
-        --accent-foreground: 222 47% 4%;
+        --accent-foreground: 222 47% 11%;
         --destructive: 0 62.8% 30.6%;
-        --destructive-foreground: 213 31% 91%;
-        --border: 222 40% 15%;
-        --input: 222 40% 15%;
+        --destructive-foreground: 210 40% 98%;
+        --border: 217 33% 25%;
+        --input: 217 33% 25%;
         --ring: 187 100% 42%;
 
-        /* Sidebar Dark - Cryshield Style */
-        --sidebar-background: 222 47% 2%;
-        --sidebar-foreground: 213 31% 91%;
+        /* Sidebar Dark - Midnight Style */
+        --sidebar-background: 222 47% 9%;
+        --sidebar-foreground: 210 40% 98%;
         --sidebar-primary: 187 100% 42%;
-        --sidebar-primary-foreground: 222 47% 4%;
-        --sidebar-accent: 222 40% 12%;
-        --sidebar-accent-foreground: 213 31% 91%;
-        --sidebar-border: 222 40% 10%;
+        --sidebar-primary-foreground: 222 47% 11%;
+        --sidebar-accent: 217 33% 17%;
+        --sidebar-accent-foreground: 210 40% 98%;
+        --sidebar-border: 217 33% 20%;
         --sidebar-ring: 187 100% 42%;
     }
 }

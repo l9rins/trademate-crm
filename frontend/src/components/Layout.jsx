@@ -11,8 +11,11 @@ import { ModeToggle } from "./ModeToggle"
 export default function Layout() {
     return (
         <SidebarProvider>
+            {/* Midnight Ambient Glow Mesh (Dark Mode Only) */}
+            <div className="fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-teal-900/15 via-slate-950 to-slate-950 opacity-0 dark:opacity-100 transition-opacity duration-1000 pointer-events-none" />
+
             <AppSidebar />
-            <SidebarInset className="flex flex-col">
+            <SidebarInset className="flex flex-col relative z-10">
                 <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-white/5 glass px-6">
                     <div className="flex items-center gap-4">
                         <SidebarTrigger className="h-9 w-9 text-muted-foreground hover:bg-muted transition-colors" />
