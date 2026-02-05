@@ -17,24 +17,16 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
-    const login = async (email, password) => {
-        const response = await api.post('/auth/login', { email, password }); // Username? Backend expects username/password.
-        // Wait, backend AuthRequest has username, email, password.
-        // AuthService.login uses username.
-        // Frontend form typically asks for Email.
-        // If backend expects 'username' field in login JSON, I need to send email as username or username as username.
-        // Let's assume user enters 'username' field values.
-        // I should match the backend expectation.
-        // Backend `AuthRequest`: username, email, password.
-        // AuthService.login uses `request.getUsername()`.
-        // So I must send `{ username: email, password }` if they login with email, or `{ username: username, password }`.
-        // Let's assume login with Username for now to be safe.
+    const login = async (username, password) => {
+        // Backend expects 'username' key in JSON.
+        // Even if user enters email in the UI, we must map it to the 'username' field if we want AuthService to see it
+        // (unless we change backend to look at email field).
+        // Since Login.jsx asks for "Username", we pass it as 'username'.
+        const response = await api.post('/auth/login', { username, password });
 
         const { token } = response.data;
         localStorage.setItem('token', token);
-        const userData = { username: email }; // Mock user data from response? AuthResponse only has token.
-        // I should decode token or fetch user me.
-        // For MVP, just persist the username implies logged in.
+        const userData = { username };
         localStorage.setItem('user', JSON.stringify(userData));
         setUser(userData);
         return response.data;
