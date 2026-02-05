@@ -6,7 +6,7 @@ import { Pencil, Trash2, Plus } from 'lucide-react';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { toast } from "sonner"
+// // import { toast } from "sonner"
 import {
     Table,
     TableBody,
@@ -47,7 +47,7 @@ export default function Clients() {
             setClients(response.data);
         } catch (error) {
             console.error("Error fetching clients", error);
-            toast.error("Failed to load clients");
+            // toast.error("Failed to load clients");
         } finally {
             setLoading(false);
         }
@@ -61,10 +61,10 @@ export default function Clients() {
         if (window.confirm('Are you sure you want to delete this client?')) {
             try {
                 await api.delete(`/clients/${id}`);
-                toast.success("Client deleted");
+                // toast.success("Client deleted");
                 fetchClients();
             } catch (err) {
-                toast.error("Failed to delete client");
+                // toast.error("Failed to delete client");
             }
         }
     }
@@ -86,10 +86,10 @@ export default function Clients() {
             try {
                 if (editingClient) {
                     await api.put(`/clients/${editingClient.id}`, values);
-                    toast.success("Client updated");
+                    // toast.success("Client updated");
                 } else {
                     await api.post('/clients', values);
-                    toast.success("Client added successfully");
+                    // toast.success("Client added successfully");
                 }
                 fetchClients();
                 setIsDialogOpen(false);
@@ -97,7 +97,7 @@ export default function Clients() {
                 resetForm();
             } catch (error) {
                 console.error("Error saving client", error);
-                toast.error("Failed to save client");
+                // toast.error("Failed to save client");
             }
         },
     });

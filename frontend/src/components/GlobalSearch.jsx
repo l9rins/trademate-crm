@@ -1,14 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {
-    CalendarIcon,
-    EnvelopeClosedIcon,
-    FaceIcon,
-    GearIcon,
-    PersonIcon,
-    RocketIcon,
-} from "@radix-ui/react-icons" // Or lucide-react if installed, I'll stick to Lucide.
+
 // Wait, I installed lucide-react. CMDK examples use radix icons often but I should use my lucide.
 import {
     Calendar,

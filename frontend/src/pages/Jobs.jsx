@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { DatePicker } from "@/components/ui/date-picker"
-import { toast } from "sonner"
+// // import { toast } from "sonner"
 import {
     Table,
     TableBody,
@@ -60,7 +60,7 @@ export default function Jobs() {
             setJobs(response.data);
         } catch (error) {
             console.error("Error fetching jobs", error);
-            toast.error("Failed to fetch jobs");
+            console.error("Failed to fetch jobs"); // toast.error("Failed to fetch jobs");
         }
     };
 
@@ -82,10 +82,10 @@ export default function Jobs() {
         if (window.confirm('Are you sure you want to delete this job?')) {
             try {
                 await api.delete(`/jobs/${id}`);
-                toast.success("Job deleted successfully");
+                // toast.success("Job deleted successfully");
                 fetchJobs();
             } catch (err) {
-                toast.error("Failed to delete job");
+                // toast.error("Failed to delete job");
             }
         }
     }
@@ -114,10 +114,10 @@ export default function Jobs() {
 
                 if (editingJob) {
                     await api.put(`/jobs/${editingJob.id}`, payload);
-                    toast.success("Job updated successfully");
+                    // toast.success("Job updated successfully");
                 } else {
                     await api.post('/jobs', payload);
-                    toast.success("Job created successfully");
+                    // toast.success("Job created successfully");
                 }
                 fetchJobs();
                 setIsDialogOpen(false);
@@ -125,7 +125,7 @@ export default function Jobs() {
                 resetForm();
             } catch (error) {
                 console.error("Error saving job", error);
-                toast.error("Failed to save job");
+                // toast.error("Failed to save job");
             }
         },
     });
