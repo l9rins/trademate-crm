@@ -3,6 +3,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import api from '../lib/api';
 import { Pencil, Trash2, Plus, Calendar as CalendarIcon, MapPin, User, Clock } from 'lucide-react';
+import { format } from "date-fns"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -109,7 +110,7 @@ export default function Jobs() {
                 const payload = {
                     ...values,
                     client: values.clientId ? { id: values.clientId } : null,
-                    // scheduledDate is already Date object from DatePicker or ISO string
+                    scheduledDate: values.scheduledDate ? format(new Date(values.scheduledDate), "yyyy-MM-dd'T'HH:mm:ss") : null
                 };
 
                 if (editingJob) {
