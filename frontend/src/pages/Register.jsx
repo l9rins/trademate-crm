@@ -51,100 +51,100 @@ export default function Register() {
     });
 
     return (
-        <div className="relative flex items-center justify-center min-h-screen bg-background overflow-hidden text-foreground transition-colors duration-500">
+        <div className="relative flex items-center justify-center min-h-screen bg-[#050505] overflow-hidden transition-colors duration-500">
             {/* Mesh Gradient Background */}
-            <div className="absolute inset-0 -z-10 bg-[radial-gradient(45%_40%_at_50%_50%,rgba(99,102,241,0.08)_0%,rgba(255,255,255,0)_100%)] opacity-50 dark:opacity-20" />
-            <div className="absolute inset-0 -z-10 bg-[radial-gradient(35%_30%_at_20%_80%,rgba(168,85,247,0.05)_0%,rgba(255,255,255,0)_100%)] opacity-50 dark:opacity-10" />
+            <div className="absolute inset-0 -z-10 bg-[radial-gradient(45%_40%_at_50%_50%,rgba(6,182,212,0.1)_0%,rgba(0,0,0,0)_100%)] opacity-70" />
+            <div className="absolute inset-0 -z-10 bg-[radial-gradient(35%_30%_at_20%_80%,rgba(34,197,94,0.05)_0%,rgba(0,0,0,0)_100%)] opacity-50" />
 
-            <Card className="w-[450px] border-border shadow-2xl shadow-indigo-100/50 dark:shadow-indigo-900/50 rounded-3xl overflow-hidden backdrop-blur-sm bg-card/90">
-                <div className="h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
-                <CardHeader className="space-y-1 pb-8 px-8 pt-8 text-center">
-                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 text-primary mb-4 shadow-inner">
+            <Card className="w-[480px] border-white/5 shadow-2xl glass-card rounded-[2rem] overflow-hidden">
+                <div className="h-1.5 bg-cryshield-gradient shadow-[0_0_20px_rgba(6,182,212,0.3)]" />
+                <CardHeader className="space-y-2 pb-10 px-10 pt-10 text-center">
+                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary mb-6 shadow-inner shadow-primary/20 scale-110">
                         <UserPlus className="h-8 w-8" />
                     </div>
-                    <CardTitle className="text-3xl font-black tracking-tight text-foreground">Access Request</CardTitle>
-                    <CardDescription className="text-slate-500 font-medium pt-1">
-                        Initialize your <span className="text-indigo-600 font-bold">TradeMate</span> Enterprise account
+                    <CardTitle className="text-4xl font-black tracking-tighter text-foreground uppercase">Access <span className="text-primary italic">Request</span></CardTitle>
+                    <CardDescription className="text-muted-foreground font-bold uppercase tracking-widest text-[10px] opacity-60 mt-2">
+                        Initialize Profile: <span className="text-primary">Cryshield Protocol</span>
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="px-8">
-                    <form onSubmit={formik.handleSubmit} className="space-y-5">
+                <CardContent className="px-10">
+                    <form onSubmit={formik.handleSubmit} className="space-y-6">
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="username" className="text-xs font-bold uppercase tracking-widest text-slate-400 pl-1">Preferred Username</Label>
+                                <Label htmlFor="username" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 pl-1">Preferred Alias</Label>
                                 <div className="relative group">
-                                    <User className="absolute left-3.5 top-3 h-4 w-4 text-slate-400 transition-colors group-focus-within:text-primary" />
+                                    <User className="absolute left-4 top-3.5 h-4 w-4 text-primary opacity-50 transition-all group-focus-within:opacity-100 group-focus-within:scale-110" />
                                     <Input
                                         id="username"
                                         placeholder="lorenz_admin"
-                                        className="pl-11 h-11 bg-slate-50/50 border-slate-200 rounded-xl focus:bg-white transition-all focus:ring-2 focus:ring-primary/10"
+                                        className="pl-12 h-12 bg-white/5 border-white/5 rounded-xl focus:bg-white/10 transition-all focus:ring-2 focus:ring-primary/20 font-bold"
                                         {...formik.getFieldProps('username')}
                                     />
                                 </div>
                                 {formik.touched.username && formik.errors.username && (
-                                    <p className="text-[10px] font-bold text-rose-500 uppercase tracking-tighter pl-1">{formik.errors.username}</p>
+                                    <p className="text-[9px] font-black text-rose-500 uppercase tracking-widest pl-2">{formik.errors.username}</p>
                                 )}
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="email" className="text-xs font-bold uppercase tracking-widest text-slate-400 pl-1">Professional Email</Label>
+                                <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 pl-1">Secure Channel</Label>
                                 <div className="relative group">
-                                    <Mail className="absolute left-3.5 top-3 h-4 w-4 text-slate-400 transition-colors group-focus-within:text-primary" />
+                                    <Mail className="absolute left-4 top-3.5 h-4 w-4 text-primary opacity-50 transition-all group-focus-within:opacity-100 group-focus-within:scale-110" />
                                     <Input
                                         id="email"
                                         type="email"
-                                        placeholder="lorenz@trade.mate"
-                                        className="pl-11 h-11 bg-slate-50/50 border-slate-200 rounded-xl focus:bg-white transition-all focus:ring-2 focus:ring-primary/10"
+                                        placeholder="lorenz@secure.vault"
+                                        className="pl-12 h-12 bg-white/5 border-white/5 rounded-xl focus:bg-white/10 transition-all focus:ring-2 focus:ring-primary/20 font-bold"
                                         {...formik.getFieldProps('email')}
                                     />
                                 </div>
                                 {formik.touched.email && formik.errors.email && (
-                                    <p className="text-[10px] font-bold text-rose-500 uppercase tracking-tighter pl-1">{formik.errors.email}</p>
+                                    <p className="text-[9px] font-black text-rose-500 uppercase tracking-widest pl-2">{formik.errors.email}</p>
                                 )}
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="password" className="text-xs font-bold uppercase tracking-widest text-slate-400 pl-1">Secure Password</Label>
+                                <Label htmlFor="password" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 pl-1">Unique Keyphrase</Label>
                                 <div className="relative group">
-                                    <Lock className="absolute left-3.5 top-3 h-4 w-4 text-slate-400 transition-colors group-focus-within:text-primary" />
+                                    <Lock className="absolute left-4 top-3.5 h-4 w-4 text-primary opacity-50 transition-all group-focus-within:opacity-100 group-focus-within:scale-110" />
                                     <Input
                                         id="password"
                                         type="password"
                                         placeholder="••••••••"
-                                        className="pl-11 h-11 bg-slate-50/50 border-slate-200 rounded-xl focus:bg-white transition-all focus:ring-2 focus:ring-primary/10"
+                                        className="pl-12 h-12 bg-white/5 border-white/5 rounded-xl focus:bg-white/10 transition-all focus:ring-2 focus:ring-primary/20 font-bold"
                                         {...formik.getFieldProps('password')}
                                     />
                                 </div>
                                 {formik.touched.password && formik.errors.password && (
-                                    <p className="text-[10px] font-bold text-rose-500 uppercase tracking-tighter pl-1">{formik.errors.password}</p>
+                                    <p className="text-[9px] font-black text-rose-500 uppercase tracking-widest pl-2">{formik.errors.password}</p>
                                 )}
                             </div>
                         </div>
 
                         <Button
                             type="submit"
-                            className="w-full h-12 rounded-xl text-md font-bold bg-gradient-to-r from-indigo-600 to-purple-600 hover:opacity-90 shadow-lg shadow-indigo-200 transition-all border-0 mt-2"
+                            className="w-full h-12 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] bg-cryshield-gradient hover:opacity-90 shadow-2xl shadow-primary/20 transition-all border-0 mt-4"
                             disabled={formik.isSubmitting}
                         >
-                            {formik.isSubmitting ? "Provisioning Account..." : "Initiate Onboarding"}
+                            {formik.isSubmitting ? "Provisioning..." : "Initialize Onboarding"}
                         </Button>
                     </form>
                 </CardContent>
-                <CardFooter className="flex flex-col gap-4 pb-8 pt-4">
-                    <div className="flex items-center gap-2 w-full px-8">
-                        <div className="h-[1px] bg-slate-100 flex-1" />
-                        <span className="text-[10px] font-bold text-slate-300 uppercase tracking-[0.2em]">Registered?</span>
-                        <div className="h-[1px] bg-slate-100 flex-1" />
+                <CardFooter className="flex flex-col gap-6 pb-10 pt-6 px-10">
+                    <div className="flex items-center gap-3 w-full px-4">
+                        <div className="h-[1px] bg-white/5 flex-1" />
+                        <span className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Established?</span>
+                        <div className="h-[1px] bg-white/5 flex-1" />
                     </div>
-                    <Link to="/login" className="w-full px-8">
-                        <Button variant="ghost" className="w-full h-11 rounded-xl text-xs font-bold text-slate-500 hover:text-indigo-600 hover:bg-indigo-50/50 transition-colors">
-                            Return to Secure Sign In
+                    <Link to="/login" className="w-full">
+                        <Button variant="ghost" className="w-full h-12 rounded-xl text-[10px] font-black text-muted-foreground/60 hover:text-primary hover:bg-white/5 transition-all uppercase tracking-widest border border-white/5">
+                            Return to Secure Vault
                         </Button>
                     </Link>
                 </CardFooter>
             </Card>
 
             <div className="absolute bottom-8 left-0 right-0 text-center">
-                <p className="text-[10px] font-medium text-slate-400 uppercase tracking-[0.3em]">
-                    &copy; 2026 TradeMate CRM &bull; Ultra Premium Division
+                <p className="text-[9px] font-black text-muted-foreground/30 uppercase tracking-[0.5em]">
+                    &copy; 2026 Cryshield Protocol &bull; Secure Workspace Division
                 </p>
             </div>
         </div>
