@@ -62,6 +62,18 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Textarea } from "@/components/ui/textarea"
+import { toast } from "sonner"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 const JOB_STATUSES = ['PENDING', 'IN_PROGRESS', 'COMPLETED'];
 
@@ -72,6 +84,7 @@ export default function Jobs() {
     const [editingJob, setEditingJob] = useState(null);
     const [isSheetOpen, setIsSheetOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [jobToDelete, setJobToDelete] = useState(null);
 
     const fetchJobs = async () => {
         try {
@@ -79,7 +92,9 @@ export default function Jobs() {
             const response = await api.get('/jobs');
             setJobs(response.data);
         } catch (error) {
-            console.error("Error fetching jobs", error);
+            toast.error("Failed to sync jobs", {
+                description: "The connection to the analytics engine was interrupted."
+            });
         } finally {
             setLoading(false);
         }
@@ -99,14 +114,20 @@ export default function Jobs() {
         fetchClients();
     }, []);
 
-    const handleDelete = async (id) => {
-        if (window.confirm('Are you sure you want to delete this job?')) {
-            try {
-                await api.delete(`/jobs/${id}`);
-                fetchJobs();
-            } catch (err) {
-                console.error("Failed to delete job");
-            }
+    const handleDelete = async () => {
+        if (!jobToDelete) return;
+        try {
+            await api.delete(`/jobs/${jobToDelete.id}`);
+            fetchJobs();
+            toast.success("Job decommissioned", {
+                description: `"${jobToDelete.title}" has been removed from the pipeline.`
+            });
+        } catch (err) {
+            toast.error("Operation failed", {
+                description: "The job could not be deleted at this time."
+            });
+        } finally {
+            setJobToDelete(null);
         }
     }
 
@@ -134,15 +155,23 @@ export default function Jobs() {
 
                 if (editingJob) {
                     await api.put(`/jobs/${editingJob.id}`, payload);
+                    toast.success("Job updated", {
+                        description: `Successfully refined details for "${values.title}".`
+                    });
                 } else {
                     await api.post('/jobs', payload);
+                    toast.success("Job initialized", {
+                        description: `"${values.title}" has been added to the pipeline.`
+                    });
                 }
                 fetchJobs();
                 setIsSheetOpen(false);
                 setEditingJob(null);
                 resetForm();
             } catch (error) {
-                console.error("Error saving job", error);
+                toast.error("Process error", {
+                    description: "Failed to save job details. Please check your data."
+                });
             }
         },
     });
@@ -311,7 +340,7 @@ export default function Jobs() {
                                                         </DropdownMenuItem>
                                                         <DropdownMenuSeparator />
                                                         <DropdownMenuItem
-                                                            onClick={() => handleDelete(job.id)}
+                                                            onClick={() => setJobToDelete(job)}
                                                             className="text-rose-600 focus:bg-rose-50 focus:text-rose-600 cursor-pointer"
                                                         >
                                                             <Trash2 className="mr-2 h-4 w-4" />
@@ -406,10 +435,10 @@ export default function Jobs() {
 
                         <div className="space-y-2">
                             <Label htmlFor="description" className="text-sm font-bold text-slate-700">Internal Notes</Label>
-                            <textarea
+                            <Textarea
                                 id="description"
                                 {...formik.getFieldProps('description')}
-                                className="flex min-h-[100px] w-full rounded-md border border-slate-200 bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
+                                className="min-h-[100px] border-slate-200 focus:ring-primary/20"
                                 placeholder="Add any specific instructions or client requests..."
                             />
                         </div>
@@ -422,6 +451,26 @@ export default function Jobs() {
                     </form>
                 </SheetContent>
             </Sheet>
+
+            <AlertDialog open={!!jobToDelete} onOpenChange={() => setJobToDelete(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will permanently remove the job <span className="font-bold text-slate-900">"{jobToDelete?.title}"</span> from your workspace. This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleDelete}
+                            className="bg-rose-600 hover:bg-rose-700 rounded-xl"
+                        >
+                            Delete Job
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }

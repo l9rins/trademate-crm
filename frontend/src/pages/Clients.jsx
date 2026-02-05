@@ -52,6 +52,18 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Textarea } from "@/components/ui/textarea"
+import { toast } from "sonner"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 export default function Clients() {
     const [clients, setClients] = useState([]);
@@ -59,6 +71,7 @@ export default function Clients() {
     const [editingClient, setEditingClient] = useState(null);
     const [isSheetOpen, setIsSheetOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [clientToDelete, setClientToDelete] = useState(null);
 
     const fetchClients = async () => {
         setLoading(true);
@@ -66,7 +79,9 @@ export default function Clients() {
             const response = await api.get('/clients');
             setClients(response.data);
         } catch (error) {
-            console.error("Error fetching clients", error);
+            toast.error("Network Error", {
+                description: "Failed to synchronize client directory with the vault."
+            });
         } finally {
             setLoading(false);
         }
@@ -76,14 +91,20 @@ export default function Clients() {
         fetchClients();
     }, []);
 
-    const handleDelete = async (id) => {
-        if (window.confirm('Are you sure you want to delete this client?')) {
-            try {
-                await api.delete(`/clients/${id}`);
-                fetchClients();
-            } catch (err) {
-                console.error("Failed to delete client");
-            }
+    const handleDelete = async () => {
+        if (!clientToDelete) return;
+        try {
+            await api.delete(`/clients/${clientToDelete.id}`);
+            fetchClients();
+            toast.success("Client Vault Updated", {
+                description: `Successfully removed "${clientToDelete.name}" from the database.`
+            });
+        } catch (err) {
+            toast.error("Operation Denied", {
+                description: "Unable to delete client record. Internal protection active."
+            });
+        } finally {
+            setClientToDelete(null);
         }
     }
 
@@ -104,15 +125,23 @@ export default function Clients() {
             try {
                 if (editingClient) {
                     await api.put(`/clients/${editingClient.id}`, values);
+                    toast.success("Identity Updated", {
+                        description: `Profile for "${values.name}" has been successfully refined.`
+                    });
                 } else {
                     await api.post('/clients', values);
+                    toast.success("Entry Established", {
+                        description: `"${values.name}" has been officially onboarded.`
+                    });
                 }
                 fetchClients();
                 setIsSheetOpen(false);
                 setEditingClient(null);
                 resetForm();
             } catch (error) {
-                console.error("Error saving client", error);
+                toast.error("Validation Error", {
+                    description: "Client profiling failed. Please audit input fields."
+                });
             }
         },
     });
@@ -292,7 +321,7 @@ export default function Clients() {
                                                         </DropdownMenuItem>
                                                         <DropdownMenuSeparator />
                                                         <DropdownMenuItem
-                                                            onClick={() => handleDelete(client.id)}
+                                                            onClick={() => setClientToDelete(client)}
                                                             className="text-rose-600 focus:bg-rose-50 focus:text-rose-600 cursor-pointer"
                                                         >
                                                             <Trash2 className="mr-2 h-4 w-4" />
@@ -355,9 +384,9 @@ export default function Clients() {
                             <Label htmlFor="address" className="text-sm font-bold text-slate-700">Primary Address</Label>
                             <div className="relative">
                                 <MapPin className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                                <textarea
+                                <Textarea
                                     id="address"
-                                    className="flex min-h-[80px] w-full rounded-md border border-slate-200 bg-background pl-10 pr-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
+                                    className="pl-10 min-h-[80px] border-slate-200 focus:ring-primary/20"
                                     placeholder="Enter physical location..."
                                     {...formik.getFieldProps('address')}
                                 />
@@ -366,10 +395,10 @@ export default function Clients() {
 
                         <div className="space-y-2">
                             <Label htmlFor="notes" className="text-sm font-bold text-slate-700">Internal Background Notes</Label>
-                            <textarea
+                            <Textarea
                                 id="notes"
                                 {...formik.getFieldProps('notes')}
-                                className="flex min-h-[100px] w-full rounded-md border border-slate-200 bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
+                                className="min-h-[100px] border-slate-200 focus:ring-primary/20"
                                 placeholder="Important details about this client..."
                             />
                         </div>
@@ -382,6 +411,26 @@ export default function Clients() {
                     </form>
                 </SheetContent>
             </Sheet>
+
+            <AlertDialog open={!!clientToDelete} onOpenChange={() => setClientToDelete(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will permanently remove <span className="font-bold text-slate-900">"{clientToDelete?.name}"</span> and all associated data from the CRM. This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleDelete}
+                            className="bg-rose-600 hover:bg-rose-700 rounded-xl"
+                        >
+                            Delete Client
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }

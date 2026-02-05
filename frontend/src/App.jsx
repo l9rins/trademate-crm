@@ -6,6 +6,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Clients from './pages/Clients';
 import Jobs from './pages/Jobs';
+import Settings from './pages/Settings';
 import { useAuth } from './context/AuthContext';
 
 const PrivateRoute = ({ children }) => {
@@ -28,6 +29,7 @@ function App() {
         <Route index element={<Dashboard />} />
         <Route path="jobs" element={<Jobs />} />
         <Route path="clients" element={<Clients />} />
+        <Route path="settings" element={<Settings />} />
       </Route>
     </Routes>
   );

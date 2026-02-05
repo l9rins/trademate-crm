@@ -37,7 +37,7 @@ export function AppSidebar() {
     ]
 
     return (
-        <Sidebar collapsible="icon" className="bg-slate-950 text-slate-50 border-r-slate-800">
+        <Sidebar collapsible="icon" className="bg-sidebar text-sidebar-foreground border-r-sidebar-border">
             <SidebarHeader className="p-4">
                 <div className="flex items-center gap-3 px-2">
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
@@ -78,13 +78,16 @@ export function AppSidebar() {
                     <SidebarGroupLabel className="text-slate-500 font-semibold px-4 py-2 uppercase tracking-wider text-[10px]">Actions</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            <SidebarMenuItem>
+                            <SidebarMenuItem className="px-2 pb-2">
                                 <SidebarMenuButton
+                                    asChild
                                     tooltip="New Job"
-                                    className="hover:bg-slate-900 text-indigo-400"
+                                    className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-lg shadow-lg shadow-primary/20 h-10 transition-all"
                                 >
-                                    <PlusCircle className="h-4 w-4" />
-                                    <span className="font-medium">New Job</span>
+                                    <Link to="/jobs">
+                                        <PlusCircle className="h-4 w-4" />
+                                        <span>New Job</span>
+                                    </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
                         </SidebarMenu>

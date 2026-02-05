@@ -4,10 +4,10 @@ import { cn } from "@/lib/utils"
 
 const StatusBadge = ({ status }) => {
     const styles = {
-        PENDING: "bg-amber-100/50 text-amber-700 hover:bg-amber-100/80 border-amber-200/50",
-        IN_PROGRESS: "bg-blue-100/50 text-blue-700 hover:bg-blue-100/80 border-blue-200/50",
-        COMPLETED: "bg-emerald-100/50 text-emerald-700 hover:bg-emerald-100/80 border-emerald-200/50",
-        CANCELLED: "bg-rose-100/50 text-rose-700 hover:bg-rose-100/80 border-rose-200/50",
+        PENDING: "bg-amber-100/50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 hover:bg-amber-100/80 border-amber-200/50 dark:border-amber-500/20",
+        IN_PROGRESS: "bg-blue-100/50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400 hover:bg-blue-100/80 border-blue-200/50 dark:border-blue-500/20",
+        COMPLETED: "bg-emerald-100/50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 hover:bg-emerald-100/80 border-emerald-200/50 dark:border-emerald-500/20",
+        CANCELLED: "bg-rose-100/50 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400 hover:bg-rose-100/80 border-rose-200/50 dark:border-rose-500/20",
     };
 
     const currentStatus = status?.toUpperCase().replace(' ', '_') || 'PENDING';
