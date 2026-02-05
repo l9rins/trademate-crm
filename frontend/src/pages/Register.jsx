@@ -37,7 +37,8 @@ export default function Register() {
                 await register(values.username, values.email, values.password);
                 navigate('/');
             } catch (err) {
-                setError('Registration failed. Username or Email may be taken.');
+                const errorMessage = err.response?.data?.error || 'Registration failed. Username or Email may be taken.';
+                setError(errorMessage);
             }
         },
     });
