@@ -52,6 +52,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -73,10 +74,13 @@ export default function Jobs() {
 
     const fetchJobs = async () => {
         try {
+            setLoading(true);
             const response = await api.get('/jobs');
             setJobs(response.data);
         } catch (error) {
             console.error("Error fetching jobs", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -171,7 +175,7 @@ export default function Jobs() {
                     <h2 className="text-3xl font-bold tracking-tight text-slate-900">Job Pipeline</h2>
                     <p className="text-slate-500 font-medium">Coordinate and track all active service requests.</p>
                 </div>
-                <Button onClick={openNewJobSheet} className="shadow-lg shadow-primary/20 rounded-full px-6">
+                <Button onClick={openNewJobSheet} className="shadow-lg shadow-primary/20 rounded-full px-6 bg-gradient-to-r from-primary to-indigo-600 hover:opacity-90 text-white border-0 transition-all duration-200">
                     <Plus className="mr-2 h-4 w-4" /> New Job Request
                 </Button>
             </div>
@@ -212,7 +216,26 @@ export default function Jobs() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {filteredJobs.length === 0 ? (
+                                {loading ? (
+                                    Array.from({ length: 5 }).map((_, i) => (
+                                        <TableRow key={i}>
+                                            <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                                            <TableCell>
+                                                <div className="flex items-center gap-3">
+                                                    <Skeleton className="h-8 w-8 rounded-full" />
+                                                    <div className="space-y-2">
+                                                        <Skeleton className="h-3 w-20" />
+                                                        <Skeleton className="h-2 w-16" />
+                                                    </div>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell><Skeleton className="h-6 w-16 rounded-full" /></TableCell>
+                                            <TableCell><div className="space-y-2"><Skeleton className="h-3 w-24" /><Skeleton className="h-3 w-20" /></div></TableCell>
+                                            <TableCell><Skeleton className="h-4 w-40" /></TableCell>
+                                            <TableCell className="text-right"><Skeleton className="ml-auto h-8 w-8 rounded-full" /></TableCell>
+                                        </TableRow>
+                                    ))
+                                ) : filteredJobs.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={6} className="h-48 text-center bg-white">
                                             <div className="flex flex-col items-center justify-center text-slate-500">
@@ -224,75 +247,81 @@ export default function Jobs() {
                                             </div>
                                         </TableCell>
                                     </TableRow>
-                                ) : filteredJobs.map((job) => (
-                                    <TableRow key={job.id} className="group hover:bg-slate-50/80 transition-colors">
-                                        <TableCell>
-                                            <div className="flex flex-col">
-                                                <span className="font-bold text-slate-900 text-sm">{job.title}</span>
-                                                <span className="text-[10px] text-slate-400 font-medium uppercase tracking-tighter">ID: JB-{job.id.toString().padStart(4, '0')}</span>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <div className="flex items-center gap-3">
-                                                <Avatar className="h-8 w-8 border-2 border-white shadow-sm shrink-0">
-                                                    <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-bold">
-                                                        {job.client?.name?.substring(0, 2).toUpperCase() || "JD"}
-                                                    </AvatarFallback>
-                                                </Avatar>
-                                                <div className="flex flex-col min-w-0">
-                                                    <span className="text-sm font-semibold text-slate-700 truncate">{job.client?.name || 'No Client'}</span>
-                                                    <span className="text-[11px] text-slate-400 truncate italic">Client Account</span>
+                                ) : (
+                                    filteredJobs.map((job) => (
+                                        <TableRow key={job.id} className="group hover:bg-muted/50 border-b border-slate-100/50 transition-colors">
+                                            <TableCell className="py-4">
+                                                <div className="flex flex-col">
+                                                    <span className="font-bold text-slate-900 text-sm line-clamp-1">{job.title}</span>
+                                                    <span className="text-[10px] text-slate-400 font-medium uppercase tracking-tighter">REF: JOB-{job.id.toString().padStart(4, '0')}</span>
                                                 </div>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <StatusBadge status={job.status} />
-                                        </TableCell>
-                                        <TableCell>
-                                            <div className="flex items-center gap-2 text-slate-600">
-                                                <CalendarDays className="h-4 w-4 text-slate-400" />
-                                                <span className="text-sm font-medium">
-                                                    {job.scheduledDate ? format(new Date(job.scheduledDate), "MMM dd, yyyy") : '-'}
-                                                </span>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <div className="flex items-center gap-2 text-slate-600 max-w-[200px]">
-                                                <MapPin className="h-4 w-4 text-slate-400 shrink-0" />
-                                                <span className="text-sm font-medium truncate">{job.address || '-'}</span>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="text-right px-6">
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-200/50 rounded-full">
-                                                        <MoreHorizontal className="h-4 w-4" />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end" className="w-48 p-1">
-                                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                    <DropdownMenuSeparator />
-                                                    <DropdownMenuItem onClick={() => handleEdit(job)} className="cursor-pointer">
-                                                        <Pencil className="mr-2 h-4 w-4 text-slate-400" />
-                                                        <span>Edit Details</span>
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem className="cursor-pointer">
-                                                        <ArrowUpRight className="mr-2 h-4 w-4 text-slate-400" />
-                                                        <span>View Details</span>
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuSeparator />
-                                                    <DropdownMenuItem
-                                                        onClick={() => handleDelete(job.id)}
-                                                        className="text-rose-600 focus:bg-rose-50 focus:text-rose-600 cursor-pointer"
-                                                    >
-                                                        <Trash2 className="mr-2 h-4 w-4" />
-                                                        <span>Delete Job</span>
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
+                                            </TableCell>
+                                            <TableCell className="py-4">
+                                                <div className="flex items-center gap-3">
+                                                    <Avatar className="h-8 w-8 border-2 border-white shadow-sm shrink-0">
+                                                        <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-bold">
+                                                            {job.client?.name?.substring(0, 2).toUpperCase() || "JD"}
+                                                        </AvatarFallback>
+                                                    </Avatar>
+                                                    <div className="flex flex-col min-w-0">
+                                                        <span className="text-xs font-bold text-slate-900 truncate">{job.client?.name || 'No Client'}</span>
+                                                        <span className="text-[10px] text-slate-400 truncate italic">Client Account</span>
+                                                    </div>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="py-4">
+                                                <StatusBadge status={job.status} />
+                                            </TableCell>
+                                            <TableCell className="py-4">
+                                                <div className="flex items-center gap-2 text-slate-600">
+                                                    <div className="w-5 flex justify-center">
+                                                        <CalendarDays className="h-3.5 w-3.5 text-slate-400" />
+                                                    </div>
+                                                    <span className="text-xs font-medium">
+                                                        {job.scheduledDate ? format(new Date(job.scheduledDate), "MMM dd, yyyy") : '-'}
+                                                    </span>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="py-4">
+                                                <div className="flex items-start gap-2 text-slate-600 max-w-[200px]">
+                                                    <div className="w-5 flex justify-center mt-0.5">
+                                                        <MapPin className="h-3.5 w-3.5 text-slate-400" />
+                                                    </div>
+                                                    <span className="text-xs font-medium leading-relaxed line-clamp-1">{job.address || '-'}</span>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="text-right px-6">
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-200/50 rounded-full">
+                                                            <MoreHorizontal className="h-4 w-4" />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end" className="w-48 p-1">
+                                                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                        <DropdownMenuSeparator />
+                                                        <DropdownMenuItem onClick={() => handleEdit(job)} className="cursor-pointer">
+                                                            <Pencil className="mr-2 h-4 w-4 text-slate-400" />
+                                                            <span>Edit Details</span>
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem className="cursor-pointer">
+                                                            <ArrowUpRight className="mr-2 h-4 w-4 text-slate-400" />
+                                                            <span>View Details</span>
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuSeparator />
+                                                        <DropdownMenuItem
+                                                            onClick={() => handleDelete(job.id)}
+                                                            className="text-rose-600 focus:bg-rose-50 focus:text-rose-600 cursor-pointer"
+                                                        >
+                                                            <Trash2 className="mr-2 h-4 w-4" />
+                                                            <span>Delete Job</span>
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                )}
                             </TableBody>
                         </Table>
                     </div>
@@ -385,7 +414,7 @@ export default function Jobs() {
                         </div>
 
                         <SheetFooter className="pt-6">
-                            <Button type="submit" className="w-full h-11 rounded-xl shadow-lg shadow-primary/20 text-md font-bold">
+                            <Button type="submit" className="w-full h-11 rounded-xl shadow-lg shadow-primary/20 text-md font-bold bg-gradient-to-r from-primary to-indigo-600 hover:opacity-90 text-white border-0 transition-all duration-200">
                                 {editingJob ? 'Confirm Updates' : 'Schedule Job'}
                             </Button>
                         </SheetFooter>

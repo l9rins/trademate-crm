@@ -17,18 +17,7 @@ export default function Layout() {
                         <div className="flex items-center gap-4">
                             <SidebarTrigger className="h-9 w-9 text-slate-500 hover:bg-slate-100 transition-colors" />
                             <div className="h-6 w-[1px] bg-slate-200 hidden md:block" />
-                            <div className="relative group hidden md:block">
-                                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" />
-                                <button className="h-9 w-64 rounded-full border bg-slate-50 pl-10 pr-4 text-left text-sm text-slate-500 hover:bg-slate-100/80 transition-all focus:outline-none focus:ring-2 focus:ring-primary/20">
-                                    Search anything...
-                                    <span className="ml-auto float-right text-[10px] bg-white border px-1.5 py-0.5 rounded shadow-sm flex items-center gap-1 font-mono uppercase text-slate-400">
-                                        ⌘ K
-                                    </span>
-                                </button>
-                                <div className="absolute inset-0 opacity-0 cursor-pointer">
-                                    <GlobalSearch />
-                                </div>
-                            </div>
+                            <GlobalSearch />
                         </div>
 
                         <div className="flex items-center gap-2">

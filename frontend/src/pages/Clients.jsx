@@ -17,6 +17,7 @@ import {
     ArrowUpRight
 } from 'lucide-react';
 import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -145,7 +146,7 @@ export default function Clients() {
                     <h2 className="text-3xl font-bold tracking-tight text-slate-900">Client Directory</h2>
                     <p className="text-slate-500 font-medium">Manage and monitor your customer relationships.</p>
                 </div>
-                <Button onClick={openNewClientSheet} className="shadow-lg shadow-primary/20 rounded-full px-6">
+                <Button onClick={openNewClientSheet} className="shadow-lg shadow-primary/20 rounded-full px-6 bg-gradient-to-r from-primary to-indigo-600 hover:opacity-90 text-white border-0 transition-all duration-200">
                     <UserPlus className="mr-2 h-4 w-4" /> Add New Client
                 </Button>
             </div>
@@ -188,11 +189,30 @@ export default function Clients() {
                                 {loading ? (
                                     Array.from({ length: 5 }).map((_, i) => (
                                         <TableRow key={i}>
-                                            <TableCell><div className="flex items-center gap-3"><div className="h-10 w-10 rounded-full bg-slate-100 animate-pulse" /><div className="space-y-2"><div className="h-4 w-24 bg-slate-100 animate-pulse" /><div className="h-3 w-16 bg-slate-50 animate-pulse" /></div></div></TableCell>
-                                            <TableCell><div className="space-y-2"><div className="h-4 w-32 bg-slate-100 animate-pulse" /><div className="h-3 w-20 bg-slate-50 animate-pulse" /></div></TableCell>
-                                            <TableCell><div className="h-4 w-40 bg-slate-100 animate-pulse" /></TableCell>
-                                            <TableCell><div className="h-5 w-16 rounded-full bg-slate-100 animate-pulse" /></TableCell>
-                                            <TableCell className="text-right"><div className="ml-auto h-8 w-8 bg-slate-100 rounded-full animate-pulse" /></TableCell>
+                                            <TableCell className="py-4 text-left">
+                                                <div className="flex items-center gap-3">
+                                                    <Skeleton className="h-10 w-10 rounded-full" />
+                                                    <div className="space-y-2 text-left">
+                                                        <Skeleton className="h-4 w-24" />
+                                                        <Skeleton className="h-3 w-16" />
+                                                    </div>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="py-4 text-left">
+                                                <div className="space-y-2 text-left">
+                                                    <Skeleton className="h-3 w-32" />
+                                                    <Skeleton className="h-3 w-24" />
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="py-4 text-left">
+                                                <Skeleton className="h-4 w-40" />
+                                            </TableCell>
+                                            <TableCell className="py-4 text-left">
+                                                <Skeleton className="h-6 w-16 rounded-full" />
+                                            </TableCell>
+                                            <TableCell className="text-right px-6">
+                                                <Skeleton className="ml-auto h-8 w-8 rounded-full" />
+                                            </TableCell>
                                         </TableRow>
                                     ))
                                 ) : filteredClients.length === 0 ? (
@@ -209,8 +229,8 @@ export default function Clients() {
                                     </TableRow>
                                 ) : (
                                     filteredClients.map((client) => (
-                                        <TableRow key={client.id} className="group hover:bg-slate-50/80 transition-colors">
-                                            <TableCell>
+                                        <TableRow key={client.id} className="group hover:bg-muted/50 border-b border-slate-100/50 transition-colors">
+                                            <TableCell className="py-4">
                                                 <div className="flex items-center gap-3">
                                                     <Avatar className="h-10 w-10 border-2 border-white shadow-sm shrink-0">
                                                         <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-bold">
@@ -223,22 +243,28 @@ export default function Clients() {
                                                     </div>
                                                 </div>
                                             </TableCell>
-                                            <TableCell>
-                                                <div className="space-y-1">
+                                            <TableCell className="py-4">
+                                                <div className="flex flex-col gap-1.5">
                                                     <div className="flex items-center gap-2 text-slate-600">
-                                                        <Mail className="h-3.5 w-3.5 text-slate-400" />
-                                                        <span className="text-xs font-medium">{client.email || 'N/A'}</span>
+                                                        <div className="w-5 flex justify-center">
+                                                            <Mail className="h-3.5 w-3.5 text-slate-400" />
+                                                        </div>
+                                                        <span className="text-xs font-medium truncate">{client.email || 'N/A'}</span>
                                                     </div>
                                                     <div className="flex items-center gap-2 text-slate-600">
-                                                        <Phone className="h-3.5 w-3.5 text-slate-400" />
-                                                        <span className="text-xs font-medium">{client.phone || 'N/A'}</span>
+                                                        <div className="w-5 flex justify-center">
+                                                            <Phone className="h-3.5 w-3.5 text-slate-400" />
+                                                        </div>
+                                                        <span className="text-xs font-medium text-nowrap">{client.phone || 'N/A'}</span>
                                                     </div>
                                                 </div>
                                             </TableCell>
-                                            <TableCell>
-                                                <div className="flex items-center gap-2 text-slate-600 max-w-[200px]">
-                                                    <MapPin className="h-4 w-4 text-slate-400 shrink-0" />
-                                                    <span className="text-sm font-medium truncate">{client.address || 'No address'}</span>
+                                            <TableCell className="py-4">
+                                                <div className="flex items-start gap-2 text-slate-600 max-w-[200px]">
+                                                    <div className="w-5 flex justify-center mt-0.5">
+                                                        <MapPin className="h-3.5 w-3.5 text-slate-400" />
+                                                    </div>
+                                                    <span className="text-xs font-medium leading-relaxed line-clamp-2">{client.address || 'No address'}</span>
                                                 </div>
                                             </TableCell>
                                             <TableCell>
@@ -349,7 +375,7 @@ export default function Clients() {
                         </div>
 
                         <SheetFooter className="pt-6">
-                            <Button type="submit" className="w-full h-11 rounded-xl shadow-lg shadow-primary/20 text-md font-bold">
+                            <Button type="submit" className="w-full h-11 rounded-xl shadow-lg shadow-primary/20 text-md font-bold bg-gradient-to-r from-primary to-indigo-600 hover:opacity-90 text-white border-0 transition-all duration-200">
                                 {editingClient ? 'Update Profile' : 'Onboard Client'}
                             </Button>
                         </SheetFooter>

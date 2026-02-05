@@ -1,17 +1,16 @@
-"use client"
-
 import * as React from "react"
-
-// Wait, I installed lucide-react. CMDK examples use radix icons often but I should use my lucide.
+import { useNavigate } from "react-router-dom"
 import {
-    Calendar,
-    Smile,
-    Calculator,
-    User,
-    CreditCard,
+    LayoutDashboard,
+    Users,
+    Briefcase,
     Settings,
+    PlusCircle,
+    UserPlus,
+    LogOut,
+    Search
 } from "lucide-react"
-
+import { useAuth } from "@/context/AuthContext"
 import {
     CommandDialog,
     CommandEmpty,
@@ -24,7 +23,9 @@ import {
 } from "@/components/ui/command"
 
 export function GlobalSearch() {
+    const { logout } = useAuth()
     const [open, setOpen] = React.useState(false)
+    const navigate = useNavigate()
 
     React.useEffect(() => {
         const down = (e) => {
@@ -38,51 +39,63 @@ export function GlobalSearch() {
         return () => document.removeEventListener("keydown", down)
     }, [])
 
+    const runCommand = React.useCallback((command) => {
+        setOpen(false)
+        command()
+    }, [])
+
     return (
         <>
-            <div className="relative w-full max-w-sm ml-auto hidden md:block">
-                <p className="text-sm text-muted-foreground cursor-pointer border rounded-md px-4 py-2 flex justify-between items-center" onClick={() => setOpen(true)}>
-                    <span>Search...</span>
-                    <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
-                        <span className="text-xs">⌘</span>K
-                    </kbd>
-                </p>
-            </div>
+            <button
+                onClick={() => setOpen(true)}
+                className="flex h-9 w-64 items-center gap-2 rounded-full border bg-slate-50 px-3 text-sm text-slate-500 hover:bg-slate-100/80 transition-all focus:outline-none focus:ring-2 focus:ring-primary/20"
+            >
+                <Search className="h-4 w-4 text-slate-400" />
+                <span>Search anything...</span>
+                <kbd className="pointer-events-none ml-auto inline-flex h-5 select-none items-center gap-1 rounded border bg-white px-1.5 font-mono text-[10px] font-medium text-slate-400">
+                    <span className="text-xs">⌘</span>K
+                </kbd>
+            </button>
 
             <CommandDialog open={open} onOpenChange={setOpen}>
                 <CommandInput placeholder="Type a command or search..." />
                 <CommandList>
                     <CommandEmpty>No results found.</CommandEmpty>
-                    <CommandGroup heading="Suggestions">
-                        <CommandItem>
-                            <Calendar className="mr-2 h-4 w-4" />
-                            <span>Calendar</span>
+                    <CommandGroup heading="Navigation">
+                        <CommandItem onSelect={() => runCommand(() => navigate("/"))}>
+                            <LayoutDashboard className="mr-2 h-4 w-4" />
+                            <span>Dashboard</span>
                         </CommandItem>
-                        <CommandItem>
-                            <Smile className="mr-2 h-4 w-4" />
-                            <span>Search Emoji</span>
+                        <CommandItem onSelect={() => runCommand(() => navigate("/clients"))}>
+                            <Users className="mr-2 h-4 w-4" />
+                            <span>Clients</span>
                         </CommandItem>
-                        <CommandItem>
-                            <Calculator className="mr-2 h-4 w-4" />
-                            <span>Calculator</span>
+                        <CommandItem onSelect={() => runCommand(() => navigate("/jobs"))}>
+                            <Briefcase className="mr-2 h-4 w-4" />
+                            <span>Jobs</span>
+                        </CommandItem>
+                    </CommandGroup>
+                    <CommandSeparator />
+                    <CommandGroup heading="Actions">
+                        <CommandItem onSelect={() => runCommand(() => navigate("/jobs"))}>
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            <span>New Job Request</span>
+                        </CommandItem>
+                        <CommandItem onSelect={() => runCommand(() => navigate("/clients"))}>
+                            <UserPlus className="mr-2 h-4 w-4" />
+                            <span>Onboard New Client</span>
                         </CommandItem>
                     </CommandGroup>
                     <CommandSeparator />
                     <CommandGroup heading="Settings">
-                        <CommandItem>
-                            <User className="mr-2 h-4 w-4" />
-                            <span>Profile</span>
-                            <CommandShortcut>⌘P</CommandShortcut>
-                        </CommandItem>
-                        <CommandItem>
-                            <CreditCard className="mr-2 h-4 w-4" />
-                            <span>Billing</span>
-                            <CommandShortcut>⌘B</CommandShortcut>
-                        </CommandItem>
-                        <CommandItem>
+                        <CommandItem onSelect={() => runCommand(() => navigate("/settings"))}>
                             <Settings className="mr-2 h-4 w-4" />
                             <span>Settings</span>
                             <CommandShortcut>⌘S</CommandShortcut>
+                        </CommandItem>
+                        <CommandItem onSelect={() => runCommand(() => logout())}>
+                            <LogOut className="mr-2 h-4 w-4" />
+                            <span>Logout</span>
                         </CommandItem>
                     </CommandGroup>
                 </CommandList>
