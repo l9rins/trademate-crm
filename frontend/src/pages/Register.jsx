@@ -60,7 +60,9 @@ export default function Register() {
                         <span className="text-xl font-bold tracking-tight text-slate-800">TradeMate</span>
                     </div>
                     <div className="space-y-1.5">
-                        <CardTitle className="text-2xl font-bold tracking-tight text-slate-900">Create Account</CardTitle>
+                        <CardTitle className="text-3xl font-black tracking-tighter text-slate-900 uppercase">
+                            Create <span className="text-teal-500 italic">Account</span>
+                        </CardTitle>
                         <CardDescription className="text-slate-500 text-sm">
                             Join the workspace and start managing your business.
                         </CardDescription>
