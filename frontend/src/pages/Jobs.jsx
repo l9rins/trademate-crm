@@ -68,6 +68,7 @@ const JOB_STATUSES = ['PENDING', 'IN_PROGRESS', 'COMPLETED'];
 export default function Jobs() {
     const [jobs, setJobs] = useState([]);
     const [clients, setClients] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [editingJob, setEditingJob] = useState(null);
     const [isSheetOpen, setIsSheetOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
