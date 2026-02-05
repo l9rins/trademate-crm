@@ -202,32 +202,32 @@ export default function Jobs() {
         <div className="space-y-6 animate-in fade-in duration-500">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight text-slate-900">Job Pipeline</h2>
-                    <p className="text-slate-500 font-medium">Coordinate and track all active service requests.</p>
+                    <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase">Job <span className="text-primary italic">Pipeline</span></h2>
+                    <p className="text-muted-foreground font-bold uppercase tracking-widest text-xs opacity-70">Coordinate and track all active service requests.</p>
                 </div>
-                <Button onClick={openNewJobSheet} className="shadow-lg shadow-primary/20 rounded-full px-6 bg-gradient-to-r from-primary to-indigo-600 hover:opacity-90 text-white border-0 transition-all duration-200">
-                    <Plus className="mr-2 h-4 w-4" /> New Job Request
+                <Button onClick={openNewJobSheet} className="shadow-2xl shadow-primary/20 rounded-xl px-8 h-12 bg-cryshield-gradient hover:opacity-90 text-white border-0 font-black uppercase text-xs tracking-widest transition-all">
+                    <Plus className="mr-2 h-4 w-4" /> Initialize Job Request
                 </Button>
             </div>
 
-            <Card className="border-slate-200/60 shadow-sm overflow-hidden">
-                <CardHeader className="bg-slate-50/50 border-b border-slate-200/60 py-4 px-6">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <Card className="glass-card shadow-2xl overflow-hidden border-white/5">
+                <CardHeader className="bg-white/5 border-b border-white/5 py-6 px-8">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                         <div className="relative flex-1 max-w-md">
-                            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-primary" />
                             <Input
                                 placeholder="Search by job, client or address..."
-                                className="pl-10 bg-white border-slate-200 rounded-lg focus:ring-primary/20"
+                                className="pl-12 bg-background/50 border-white/10 rounded-xl focus:ring-primary/20 font-bold h-11"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Button variant="outline" size="sm" className="rounded-lg text-slate-600 border-slate-200">
-                                <Filter className="mr-2 h-3.5 w-3.5" /> Filters
+                        <div className="flex items-center gap-3">
+                            <Button variant="outline" size="sm" className="rounded-xl font-black uppercase text-[10px] tracking-widest border-white/10 glass hover:bg-white/5 px-4 h-11">
+                                <Filter className="mr-2 h-4 w-4 text-primary" /> Filters
                             </Button>
-                            <Button variant="outline" size="sm" className="rounded-lg text-slate-600 border-slate-200">
-                                <FileText className="mr-2 h-3.5 w-3.5" /> Export
+                            <Button variant="outline" size="sm" className="rounded-xl font-black uppercase text-[10px] tracking-widest border-white/10 glass hover:bg-white/5 px-4 h-11">
+                                <FileText className="mr-2 h-4 w-4 text-accent" /> Export Data
                             </Button>
                         </div>
                     </div>
@@ -236,13 +236,13 @@ export default function Jobs() {
                     <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
-                                <TableRow className="hover:bg-transparent bg-slate-50/30">
-                                    <TableHead className="w-[180px] font-semibold text-slate-900">Title</TableHead>
-                                    <TableHead className="font-semibold text-slate-900">Client</TableHead>
-                                    <TableHead className="font-semibold text-slate-900">Status</TableHead>
-                                    <TableHead className="font-semibold text-slate-900">Scheduled Date</TableHead>
-                                    <TableHead className="font-semibold text-slate-900">Location</TableHead>
-                                    <TableHead className="text-right font-semibold text-slate-900">Actions</TableHead>
+                                <TableRow className="hover:bg-transparent bg-white/5 border-b border-white/5">
+                                    <TableHead className="w-[180px] font-black uppercase tracking-widest text-[10px] text-muted-foreground/60 px-8 py-5">Initiative</TableHead>
+                                    <TableHead className="font-black uppercase tracking-widest text-[10px] text-muted-foreground/60 py-5">Client Alias</TableHead>
+                                    <TableHead className="font-black uppercase tracking-widest text-[10px] text-muted-foreground/60 py-5">Priority Status</TableHead>
+                                    <TableHead className="font-black uppercase tracking-widest text-[10px] text-muted-foreground/60 py-5">Deployment Date</TableHead>
+                                    <TableHead className="font-black uppercase tracking-widest text-[10px] text-muted-foreground/60 py-5">Target Zone</TableHead>
+                                    <TableHead className="text-right font-black uppercase tracking-widest text-[10px] text-muted-foreground/60 px-8 py-5">Operations</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -443,9 +443,9 @@ export default function Jobs() {
                             />
                         </div>
 
-                        <SheetFooter className="pt-6">
-                            <Button type="submit" className="w-full h-11 rounded-xl shadow-lg shadow-primary/20 text-md font-bold bg-gradient-to-r from-primary to-indigo-600 hover:opacity-90 text-white border-0 transition-all duration-200">
-                                {editingJob ? 'Confirm Updates' : 'Schedule Job'}
+                        <SheetFooter className="pt-8">
+                            <Button type="submit" className="w-full h-12 rounded-xl shadow-2xl shadow-primary/20 font-black uppercase text-xs tracking-[0.2em] bg-cryshield-gradient hover:opacity-90 text-white border-0 transition-all">
+                                {editingJob ? 'Finalize Synthesis' : 'Deploy Deployment'}
                             </Button>
                         </SheetFooter>
                     </form>

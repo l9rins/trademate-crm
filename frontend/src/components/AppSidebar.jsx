@@ -40,12 +40,12 @@ export function AppSidebar() {
         <Sidebar collapsible="icon" className="bg-sidebar text-sidebar-foreground border-r-sidebar-border">
             <SidebarHeader className="p-4">
                 <div className="flex items-center gap-3 px-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                        <span className="text-xl font-bold italic">T</span>
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-cryshield-gradient text-white shadow-lg shadow-primary/20">
+                        <span className="text-2xl font-black italic">T</span>
                     </div>
-                    <div className="flex flex-col gap-0.5 leading-none transition-opacity group-data-[collapsible=icon]:opacity-0">
-                        <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">TradeMate</span>
-                        <span className="text-[10px] text-slate-400 uppercase tracking-widest font-medium">Enterprise CRM</span>
+                    <div className="flex flex-col gap-0 leading-none transition-opacity group-data-[collapsible=icon]:opacity-0">
+                        <span className="font-black text-xl tracking-tight text-cryshield-gradient uppercase">TradeMate</span>
+                        <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Cryshield Core</span>
                     </div>
                 </div>
             </SidebarHeader>
@@ -61,11 +61,11 @@ export function AppSidebar() {
                                         asChild
                                         isActive={location.pathname === item.url}
                                         tooltip={item.title}
-                                        className="hover:bg-slate-900 active:bg-slate-800 transition-colors"
+                                        className="hover:bg-primary/10 active:bg-primary/20 transition-all duration-300 rounded-xl px-4 py-6 data-[state=active]:bg-primary/15 data-[state=active]:text-primary"
                                     >
                                         <Link to={item.url} className="flex items-center gap-3">
-                                            <item.icon className="h-4 w-4" />
-                                            <span className="font-medium">{item.title}</span>
+                                            <item.icon className="h-5 w-5" />
+                                            <span className="font-bold">{item.title}</span>
                                         </Link>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
@@ -82,7 +82,7 @@ export function AppSidebar() {
                                 <SidebarMenuButton
                                     asChild
                                     tooltip="New Job"
-                                    className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-lg shadow-lg shadow-primary/20 h-10 transition-all"
+                                    className="bg-cryshield-gradient hover:opacity-90 text-white font-black rounded-xl shadow-xl shadow-primary/30 h-12 transition-all border-0 uppercase tracking-tight"
                                 >
                                     <Link to="/jobs">
                                         <PlusCircle className="h-4 w-4" />
@@ -96,22 +96,22 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter className="p-4 mt-auto">
-                <div className="flex items-center gap-3 px-2 py-3 rounded-xl bg-slate-900/50 border border-slate-800/50 transition-colors group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:border-none">
-                    <Avatar className="h-8 w-8 border border-white/10 shrink-0">
-                        <AvatarFallback className="bg-indigo-600/20 text-indigo-400 text-xs font-bold">
+                <div className="flex items-center gap-3 px-3 py-4 rounded-2xl bg-muted/30 border border-white/5 backdrop-blur-sm transition-all group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:border-none">
+                    <Avatar className="h-10 w-10 border-2 border-primary/30 shadow-lg shadow-primary/10 shrink-0">
+                        <AvatarFallback className="bg-cryshield-gradient text-white text-xs font-black">
                             {user?.username?.substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                     <div className="flex flex-col min-w-0 transition-opacity group-data-[collapsible=icon]:opacity-0">
-                        <span className="text-sm font-semibold truncate text-slate-200">{user?.username}</span>
-                        <span className="text-[11px] text-slate-500 truncate">{user?.email || 'Premium Plan'}</span>
+                        <span className="text-sm font-bold truncate text-foreground">{user?.username}</span>
+                        <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">{user?.email || 'Premium User'}</span>
                     </div>
                     <SidebarMenuButton
                         onClick={logout}
                         tooltip="Logout"
-                        className="ml-auto w-8 h-8 p-0 opacity-50 hover:opacity-100 hover:bg-slate-800 group-data-[collapsible=icon]:hidden"
+                        className="ml-auto w-10 h-10 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 group-data-[collapsible=icon]:hidden rounded-xl"
                     >
-                        <LogOut className="h-4 w-4 text-slate-400" />
+                        <LogOut className="h-5 w-5" />
                     </SidebarMenuButton>
                 </div>
             </SidebarFooter>

@@ -4,25 +4,28 @@ import { cn } from "@/lib/utils"
 
 const StatusBadge = ({ status }) => {
     const styles = {
-        PENDING: "bg-amber-100/50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 hover:bg-amber-100/80 border-amber-200/50 dark:border-amber-500/20",
-        IN_PROGRESS: "bg-blue-100/50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400 hover:bg-blue-100/80 border-blue-200/50 dark:border-blue-500/20",
-        COMPLETED: "bg-emerald-100/50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 hover:bg-emerald-100/80 border-emerald-200/50 dark:border-emerald-500/20",
-        CANCELLED: "bg-rose-100/50 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400 hover:bg-rose-100/80 border-rose-200/50 dark:border-rose-500/20",
-    };
+        const styles = {
+            PENDING: "bg-amber-500/10 text-amber-400 border-amber-500/20 shadow-lg shadow-amber-500/5",
+            IN_PROGRESS: "bg-primary/10 text-primary border-primary/20 shadow-lg shadow-primary/5",
+            COMPLETED: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-lg shadow-emerald-500/5",
+            CANCELLED: "bg-rose-500/10 text-rose-400 border-rose-500/20 shadow-lg shadow-rose-500/5",
+        };
 
-    const currentStatus = status?.toUpperCase().replace(' ', '_') || 'PENDING';
-    const styleClass = styles[currentStatus] || styles.PENDING;
+        const currentStatus = status?.toUpperCase().replace(' ', '_') || 'PENDING';
+        const styleClass = styles[currentStatus] || styles.PENDING;
 
-    return (
+        return(
         <Badge
-            variant="outline"
-            className={cn(
-                "font-semibold border shadow-none px-2.5 py-0.5 rounded-full text-[10px] uppercase tracking-wider",
-                styleClass
-            )}
-        >
-            {status?.replace('_', ' ')}
-        </Badge>
+            variant = "outline"
+            className = {
+                cn(
+                "font-black border shadow-none px-3 py-1 rounded-lg text-[9px] uppercase tracking-[0.15em] transition-all",
+                    styleClass
+                )
+            }
+                >
+                { status?.replace('_', ' ') }
+        </Badge >
     );
 };
 

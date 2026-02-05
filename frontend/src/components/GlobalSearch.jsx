@@ -48,11 +48,11 @@ export function GlobalSearch() {
         <>
             <button
                 onClick={() => setOpen(true)}
-                className="flex h-9 w-[300px] items-center gap-2 rounded-xl border-none bg-muted/50 px-4 text-sm text-muted-foreground hover:bg-muted transition-all focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="flex h-10 w-[300px] items-center gap-2 rounded-2xl border border-white/5 glass px-4 text-sm text-muted-foreground hover:bg-white/10 transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-lg shadow-black/5"
             >
-                <Search className="h-4 w-4 text-muted-foreground/60" />
-                <span className="font-medium">Search workspace...</span>
-                <kbd className="pointer-events-none ml-auto inline-flex h-5 select-none items-center gap-1 rounded bg-background/50 px-1.5 font-mono text-[10px] font-bold text-muted-foreground/40">
+                <Search className="h-4 w-4 text-primary" />
+                <span className="font-bold">Search workspace...</span>
+                <kbd className="pointer-events-none ml-auto inline-flex h-6 select-none items-center gap-1 rounded-lg bg-background/50 border border-white/5 px-1.5 font-mono text-[10px] font-black text-muted-foreground/60">
                     <span className="text-[10px]">⌘</span>K
                 </kbd>
             </button>

@@ -52,29 +52,30 @@ const chartData = [
 ];
 
 const MetricCard = ({ title, value, subtext, icon: Icon, trend, trendValue }) => (
-    <Card className="overflow-hidden border-slate-200/60 shadow-sm hover:shadow-md transition-shadow">
-        <CardContent className="p-6">
+    <Card className="overflow-hidden glass-card shadow-2xl hover:shadow-primary/20 hover:-translate-y-1 transition-all duration-500 group">
+        <CardContent className="p-7">
             <div className="flex items-center justify-between">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-primary">
-                    <Icon className="h-6 w-6" />
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-inner shadow-primary/30 group-hover:scale-110 transition-transform">
+                    <Icon className="h-7 w-7" />
                 </div>
                 {trend && (
                     <Badge variant="outline" className={cn(
-                        "rounded-full px-2 py-0.5 text-[10px] font-bold border-none",
-                        trend === 'up' ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"
+                        "rounded-full px-3 py-1 text-[10px] font-black border-none shadow-lg",
+                        trend === 'up' ? "bg-emerald-500/10 text-emerald-400 shadow-emerald-500/10" : "bg-rose-500/10 text-rose-400 shadow-rose-500/10"
                     )}>
-                        {trend === 'up' ? <TrendingUp className="mr-1 h-3 w-3" /> : <TrendingDown className="mr-1 h-3 w-3" />}
+                        {trend === 'up' ? <TrendingUp className="mr-1.5 h-3.5 w-3.5" /> : <TrendingDown className="mr-1.5 h-3.5 w-3.5" />}
                         {trendValue}
                     </Badge>
                 )}
             </div>
-            <div className="mt-4">
-                <p className="text-sm font-medium text-slate-500">{title}</p>
-                <div className="flex items-baseline gap-2">
-                    <h3 className="text-3xl font-bold tracking-tight text-slate-900">{value}</h3>
+            <div className="mt-6">
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50">{title}</p>
+                <div className="flex items-baseline gap-2 mt-1">
+                    <h3 className="text-4xl font-black tracking-tighter text-foreground">{value}</h3>
                 </div>
-                {subtext && <p className="mt-1 text-xs text-slate-400">{subtext}</p>}
+                {subtext && <p className="mt-2 text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">{subtext}</p>}
             </div>
+            <div className="absolute bottom-0 left-0 h-1 w-0 bg-cryshield-gradient group-hover:w-full transition-all duration-500" />
         </CardContent>
     </Card>
 );
@@ -135,16 +136,18 @@ export default function Dashboard() {
         <div className="space-y-8 animate-in fade-in duration-500">
             <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-slate-900">Welcome back, Lorenz</h1>
-                    <p className="text-slate-500 font-medium">Here's what's happening with your trade today.</p>
+                    <h1 className="text-4xl font-black tracking-tighter text-foreground uppercase">
+                        Welcome, <span className="text-cryshield-gradient">Lorenz</span>
+                    </h1>
+                    <p className="text-muted-foreground font-bold uppercase tracking-widest text-xs opacity-70">Workspace Vitality: <span className="text-primary">Optimized</span></p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Button variant="outline" className="hidden sm:flex rounded-full px-5 border-slate-200">
-                        <ArrowUpRight className="mr-2 h-4 w-4" /> Export Data
+                    <Button variant="outline" className="hidden sm:flex rounded-xl font-black uppercase text-xs border-white/5 glass hover:bg-white/5 tracking-tight px-6 h-11">
+                        <ArrowUpRight className="mr-2 h-4 w-4 text-primary" /> Export Pulse
                     </Button>
                     <Link to="/jobs">
-                        <Button className="rounded-full px-6 shadow-lg shadow-primary/20">
-                            <PlusIcon className="mr-2 h-4 w-4" /> New Job
+                        <Button className="rounded-xl px-8 h-11 bg-cryshield-gradient hover:opacity-90 shadow-2xl shadow-primary/20 text-white font-black uppercase text-xs tracking-widest transition-all">
+                            <PlusIcon className="mr-2 h-4 w-4" /> Initialize Job
                         </Button>
                     </Link>
                 </div>
@@ -197,16 +200,16 @@ export default function Dashboard() {
             </motion.div>
 
             <div className="grid gap-6 lg:grid-cols-7">
-                <Card className="lg:col-span-4 border-slate-200/60 shadow-sm overflow-hidden">
+                <Card className="lg:col-span-4 glass-card shadow-2xl overflow-hidden border-white/5">
                     <Tabs defaultValue="revenue" className="w-full">
-                        <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <CardHeader className="flex flex-row items-center justify-between p-8 pb-4">
                             <div className="space-y-1">
-                                <CardTitle className="text-xl font-bold">Analytics Engine</CardTitle>
-                                <CardDescription>Deep dive into your professional performance.</CardDescription>
+                                <CardTitle className="text-2xl font-black uppercase tracking-tighter">Analytics <span className="text-primary italic">Engine</span></CardTitle>
+                                <CardDescription className="font-bold opacity-60">Deep dive into your professional performance.</CardDescription>
                             </div>
-                            <TabsList className="bg-slate-100/80 p-1 rounded-xl">
-                                <TabsTrigger value="revenue" className="rounded-lg px-4 py-1.5 text-xs font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm">Revenue</TabsTrigger>
-                                <TabsTrigger value="volume" className="rounded-lg px-4 py-1.5 text-xs font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm">Job Volume</TabsTrigger>
+                            <TabsList className="bg-muted/50 p-1.5 rounded-2xl glass border border-white/5">
+                                <TabsTrigger value="revenue" className="rounded-xl px-6 py-2 text-[10px] font-black uppercase tracking-widest data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-xl transition-all">Revenue</TabsTrigger>
+                                <TabsTrigger value="volume" className="rounded-xl px-6 py-2 text-[10px] font-black uppercase tracking-widest data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-xl transition-all">Volume</TabsTrigger>
                             </TabsList>
                         </CardHeader>
                         <CardContent className="h-[350px] pt-4">
@@ -247,11 +250,11 @@ export default function Dashboard() {
                                         <Area
                                             type="monotone"
                                             dataKey="revenue"
-                                            stroke="hsl(var(--primary))"
-                                            strokeWidth={3}
+                                            stroke="hsl(187, 100%, 42%)"
+                                            strokeWidth={5}
                                             fillOpacity={1}
                                             fill="url(#colorRevenue)"
-                                            animationDuration={1500}
+                                            animationDuration={2000}
                                         />
                                     </AreaChart>
                                 </ResponsiveContainer>
@@ -297,10 +300,10 @@ export default function Dashboard() {
                     </Tabs>
                 </Card>
 
-                <Card className="lg:col-span-3 border-slate-200/60 shadow-sm">
-                    <CardHeader>
-                        <CardTitle>Recent Activity</CardTitle>
-                        <CardDescription>Latest updates from your team and clients.</CardDescription>
+                <Card className="lg:col-span-3 glass-card shadow-2xl border-white/5">
+                    <CardHeader className="p-8 border-b border-white/5">
+                        <CardTitle className="text-xl font-black uppercase tracking-tighter">Recent <span className="text-accent italic">Activity</span></CardTitle>
+                        <CardDescription className="font-bold opacity-60">Latest updates from your team and clients.</CardDescription>
                     </CardHeader>
                     <CardContent className="p-0">
                         {/* Define a list of activity items including mock data if necessary */}
@@ -375,9 +378,10 @@ export default function Dashboard() {
                                 </ScrollArea>
                             );
                         })()}
-                        <div className="px-6 pb-6">
-                            <Button variant="ghost" className="w-full mt-4 text-xs text-slate-400 hover:text-primary transition-colors font-bold uppercase tracking-widest border border-slate-100 rounded-xl py-6 hover:bg-slate-50">
-                                View Full Activity Log
+                        <div className="px-8 pb-8">
+                            <Button variant="ghost" className="w-full mt-6 text-[10px] text-muted-foreground/60 hover:text-primary transition-all font-black uppercase tracking-[0.2em] border border-white/5 rounded-2xl py-8 hover:bg-white/5 group relative overflow-hidden">
+                                <span className="relative z-10 transition-transform group-hover:scale-110">View Full Activity Log</span>
+                                <div className="absolute inset-0 bg-primary/5 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                             </Button>
                         </div>
                     </CardContent>
