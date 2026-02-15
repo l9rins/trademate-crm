@@ -41,7 +41,7 @@ export default function Login() {
             password: '',
         },
         validationSchema: Yup.object({
-            username: Yup.string().required('Username is required'),
+            username: Yup.string().required('Email or username is required'),
             password: Yup.string().required('Password is required'),
         }),
         onSubmit,
@@ -71,7 +71,7 @@ export default function Login() {
                     <form onSubmit={formik.handleSubmit} className="space-y-5">
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="username" className="text-xs font-semibold text-slate-600 pl-0.5">Email Address</Label>
+                                <Label htmlFor="username" className="text-xs font-semibold text-slate-600 pl-0.5">Email or Username</Label>
                                 <div className="relative group">
                                     <div className="absolute left-3 top-3 h-5 w-5 text-muted-foreground group-focus-within:text-teal-500 transition-colors pointer-events-none">
                                         <Mail className="h-5 w-5" />
@@ -79,7 +79,7 @@ export default function Login() {
                                     <Input
                                         id="username"
                                         type="text"
-                                        placeholder="name@company.com"
+                                        placeholder="name@company.com or username"
                                         className="h-11 bg-white border-slate-200 rounded-lg pl-10 focus:ring-teal-500 focus:border-teal-500 transition-all font-medium text-slate-900 placeholder:text-slate-400"
                                         {...formik.getFieldProps('username')}
                                     />

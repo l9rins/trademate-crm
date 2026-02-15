@@ -48,14 +48,12 @@ public class AuthService {
     }
 
     public AuthResponse login(AuthRequest request) {
-        // Login can be by email or username? Let's assume username for now as per
-        // loadUserByUsername
-        // But the request might send email.
-        // Let's allow login with username.
+        // Supports login with either username or email
+        String usernameOrEmail = request.getUsername();
 
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-        var userDetails = userDetailsService.loadUserByUsername(request.getUsername());
+                new UsernamePasswordAuthenticationToken(usernameOrEmail, request.getPassword()));
+        var userDetails = userDetailsService.loadUserByUsername(usernameOrEmail);
         var jwt = jwtUtils.generateToken(userDetails);
         return AuthResponse.builder().token(jwt).build();
     }
