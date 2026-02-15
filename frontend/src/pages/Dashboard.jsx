@@ -21,11 +21,12 @@ import {
     Clock,
     ArrowUpRight,
     Search,
-    AlertCircle,
-    Download
+    AlertCircle
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion";
 import {
+    LineChart,
+    Line,
     XAxis,
     YAxis,
     CartesianGrid,
@@ -40,7 +41,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-// Sample chart data
+// Sample chart data - in a real app this would come from the API
 const chartData = [
     { name: 'Mon', revenue: 4000, jobs: 24 },
     { name: 'Tue', revenue: 3000, jobs: 18 },
@@ -51,110 +52,93 @@ const chartData = [
     { name: 'Sun', revenue: 3490, jobs: 20 },
 ];
 
+// Helper for class names
 function cn(...classes) {
     return classes.filter(Boolean).join(' ');
 }
 
-// Clean, financial-grade tooltip
-const CleanTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-        return (
-            <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 shadow-xl dark:border-slate-800 dark:bg-slate-950">
-                <p className="mb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider">{label}</p>
-                <div className="flex items-baseline gap-2">
-                    <span className="text-lg font-bold text-slate-900 dark:text-white">
-                        ${payload[0].value.toLocaleString()}
-                    </span>
-                </div>
-            </div>
-        );
-    }
-    return null;
+// Animated counter for metrics
+const AnimatedNumber = ({ value }) => {
+    const numValue = typeof value === 'number' ? value : parseInt(value) || 0;
+    return (
+        <motion.span
+            key={numValue}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        >
+            {value}
+        </motion.span>
+    );
 };
 
-const VolumeTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-        return (
-            <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 shadow-xl dark:border-slate-800 dark:bg-slate-950">
-                <p className="mb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider">{label}</p>
-                <div className="flex items-baseline gap-2">
-                    <span className="text-lg font-bold text-slate-900 dark:text-white">
-                        {payload[0].value} jobs
-                    </span>
-                </div>
-            </div>
-        );
-    }
-    return null;
-};
-
-// Swiss-style metric card — micro-contrast, precision borders
 const MetricCard = ({ title, value, subtext, icon: Icon, trend, trendValue, index = 0 }) => (
     <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: index * 0.06, type: "spring", stiffness: 300, damping: 30 }}
+        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{
+            type: "spring",
+            stiffness: 260,
+            damping: 20,
+            delay: index * 0.08
+        }}
     >
-        <div className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-200 hover:shadow-md hover:border-slate-300 dark:border-slate-800 dark:bg-slate-950/50 dark:hover:border-slate-700">
-            <div className="flex items-center justify-between">
-                <div>
-                    <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{title}</p>
-                    <h3 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-                        <motion.span
-                            key={value}
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                        >
-                            {value}
-                        </motion.span>
-                    </h3>
-                </div>
-                <div className="rounded-lg bg-slate-50 p-3 text-slate-900 ring-1 ring-slate-900/5 dark:bg-slate-900 dark:text-white dark:ring-white/10">
-                    <Icon className="h-6 w-6 stroke-[1.5px]" />
-                </div>
-            </div>
-            <div className="mt-4 flex items-center text-sm">
-                {trend && (
-                    <>
-                        <span className={cn(
-                            "flex items-center gap-1 font-medium",
-                            trend === "up" ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
+        <Card className="overflow-hidden glass-card shadow-2xl hover:shadow-primary/20 hover:-translate-y-1 transition-all duration-500 group relative">
+            <CardContent className="p-7">
+                <div className="flex items-center justify-between">
+                    <motion.div
+                        className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-inner shadow-primary/30"
+                        whileHover={{ scale: 1.15, rotate: 5 }}
+                        transition={{ type: "spring", stiffness: 400 }}
+                    >
+                        <Icon className="h-7 w-7" />
+                    </motion.div>
+                    {trend && (
+                        <Badge variant="outline" className={cn(
+                            "rounded-full px-3 py-1 text-[10px] font-black border-none shadow-lg",
+                            trend === 'up' ? "bg-emerald-500/10 text-emerald-400 shadow-emerald-500/10" : "bg-rose-500/10 text-rose-400 shadow-rose-500/10"
                         )}>
-                            {trend === 'up' ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
+                            {trend === 'up' ? <TrendingUp className="mr-1.5 h-3.5 w-3.5" /> : <TrendingDown className="mr-1.5 h-3.5 w-3.5" />}
                             {trendValue}
-                        </span>
-                        <span className="ml-2 text-slate-400 dark:text-slate-500">vs last month</span>
-                    </>
-                )}
-                {!trend && subtext && (
-                    <span className="text-slate-400 dark:text-slate-500">{subtext}</span>
-                )}
-            </div>
-        </div>
+                        </Badge>
+                    )}
+                </div>
+                <div className="mt-6">
+                    <p className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/50">{title}</p>
+                    <div className="flex items-baseline gap-2 mt-1">
+                        <h3 className="text-4xl font-black tracking-tighter text-foreground">
+                            <AnimatedNumber value={value} />
+                        </h3>
+                    </div>
+                    {subtext && <p className="mt-2 text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">{subtext}</p>}
+                </div>
+                <div className="absolute bottom-0 left-0 h-1 w-0 bg-cryshield-gradient group-hover:w-full transition-all duration-500" />
+            </CardContent>
+        </Card>
     </motion.div>
 );
 
-// Skeleton
+// Shimmer skeleton for first-load only
 const DashboardSkeleton = () => (
     <div className="space-y-8 animate-in fade-in duration-300">
         <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div>
-                <div className="h-9 w-64 rounded-lg bg-slate-100 dark:bg-slate-800 animate-pulse" />
-                <div className="h-4 w-40 rounded-lg bg-slate-50 dark:bg-slate-800/50 animate-pulse mt-2" />
+                <div className="h-10 w-64 rounded-lg bg-muted/50 animate-pulse" />
+                <div className="h-4 w-40 rounded-lg bg-muted/30 animate-pulse mt-2" />
             </div>
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/50 p-6 space-y-4">
+                <div key={i} className="glass-card rounded-xl p-7 space-y-4">
                     <div className="flex justify-between">
-                        <div className="space-y-2">
-                            <div className="h-4 w-20 rounded bg-slate-100 dark:bg-slate-800 animate-pulse" />
-                            <div className="h-8 w-16 rounded bg-slate-100 dark:bg-slate-800 animate-pulse" />
-                        </div>
-                        <div className="h-12 w-12 rounded-lg bg-slate-50 dark:bg-slate-900 animate-pulse" />
+                        <div className="h-14 w-14 rounded-2xl bg-muted/50 animate-pulse" />
+                        <div className="h-6 w-16 rounded-full bg-muted/30 animate-pulse" />
                     </div>
-                    <div className="h-3 w-32 rounded bg-slate-50 dark:bg-slate-800/50 animate-pulse" />
+                    <div className="space-y-2 mt-6">
+                        <div className="h-3 w-20 rounded bg-muted/30 animate-pulse" />
+                        <div className="h-10 w-16 rounded bg-muted/50 animate-pulse" />
+                        <div className="h-2 w-32 rounded bg-muted/20 animate-pulse" />
+                    </div>
                 </div>
             ))}
         </div>
@@ -162,13 +146,15 @@ const DashboardSkeleton = () => (
 );
 
 export default function Dashboard() {
+    // ⚡ React Query SWR — instant cache hits, background refetch
     const { data: apiData, isLoading, isFetching, isError } = useQuery({
         queryKey: ['dashboardStats'],
         queryFn: () => api.get('/dashboard').then(res => res.data),
-        staleTime: 60_000,
+        staleTime: 60_000,       // 1 minute — data stays fresh
         retry: 1,
     });
 
+    // Fallback stats to prevent crash if apiData is undefined
     const stats = apiData || {
         totalJobs: 0,
         pendingJobs: 0,
@@ -176,52 +162,51 @@ export default function Dashboard() {
         todayJobs: [],
     };
 
+    // Only show skeleton on absolute first load (no cached data)
     if (isLoading && !apiData) return <DashboardSkeleton />;
 
     if (isError) {
         return (
-            <div className="flex flex-col items-center justify-center p-12 text-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/50 m-8">
-                <div className="rounded-full bg-rose-50 dark:bg-rose-500/10 p-4 mb-4">
+            <div className="flex flex-col items-center justify-center p-12 text-center glass-card m-8">
+                <div className="rounded-full bg-rose-500/10 p-4 mb-4">
                     <AlertCircle className="h-8 w-8 text-rose-500" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Unable to load dashboard</h3>
-                <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mt-2 max-w-sm">
-                    We're having trouble connecting to the server. Please check your connection and try again.
-                </p>
+                <h3 className="text-xl font-black text-foreground uppercase tracking-tighter">Unable to load metrics</h3>
+                <p className="text-muted-foreground text-sm font-medium mt-2 max-w-sm">We're having trouble connecting to the intelligence engine. Please check your connection and try again.</p>
                 <Button
                     onClick={() => window.location.reload()}
-                    className="mt-6 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 px-8 py-2 font-semibold text-sm rounded-lg"
+                    className="mt-6 bg-cryshield-gradient px-8 py-2 font-black uppercase text-xs tracking-widest text-white rounded-xl"
                 >
-                    Retry
+                    Retry Connection
                 </Button>
             </div>
         );
     }
 
     const metrics = [
-        { title: "Active Jobs", value: stats.totalJobs || 0, subtext: "Jobs in pipeline", icon: Briefcase, trend: "up", trendValue: "+12.5%" },
-        { title: "Pending Review", value: stats.pendingJobs || 0, subtext: "Awaiting approval", icon: Clock, trend: "down", trendValue: "-2%" },
-        { title: "Completed", value: stats.completedJobs || 0, subtext: "Finished this month", icon: CheckCircle2, trend: "up", trendValue: "+5.2%" },
-        { title: "Retention Rate", value: "98.2%", subtext: "Customer satisfaction", icon: Users },
+        { title: "Total Active Jobs", value: stats.totalJobs || 0, subtext: "Jobs currently in pipeline", icon: Briefcase, trend: "up", trendValue: "+12.5%" },
+        { title: "Pending Review", value: stats.pendingJobs || 0, subtext: "Awaiting client approval", icon: Clock, trend: "down", trendValue: "-2%" },
+        { title: "Completed Jobs", value: stats.completedJobs || 0, subtext: "Total finished this month", icon: CheckCircle2, trend: "up", trendValue: "+5.2%" },
+        { title: "Retention Rate", value: "98.2%", subtext: "Customer satisfaction score", icon: Users },
     ];
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
-            {/* Header */}
             <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-                        Dashboard
+                    <h1 className="text-4xl font-black tracking-tighter text-foreground uppercase">
+                        Welcome, <span className="text-cryshield-gradient">Lorenz</span>
                     </h1>
-                    <div className="flex items-center gap-3 mt-1">
-                        <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Overview of your business performance</p>
+                    <div className="flex items-center gap-3">
+                        <p className="text-muted-foreground font-bold uppercase tracking-widest text-xs opacity-70">Workspace Vitality: <span className="text-primary">Optimized</span></p>
+                        {/* Background refetch indicator — subtle pulse when syncing */}
                         <AnimatePresence>
                             {isFetching && (
                                 <motion.div
                                     initial={{ opacity: 0, scale: 0 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0, scale: 0 }}
-                                    className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"
+                                    className="h-2 w-2 rounded-full bg-primary animate-pulse"
                                     title="Syncing..."
                                 />
                             )}
@@ -229,36 +214,35 @@ export default function Dashboard() {
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Button variant="outline" className="hidden sm:flex rounded-lg font-medium text-sm border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 h-10 px-4">
-                        <Download className="mr-2 h-4 w-4" /> Export
+                    <Button variant="outline" className="hidden sm:flex rounded-xl font-black uppercase text-xs border-white/5 glass hover:bg-white/5 tracking-tight px-6 h-11">
+                        <ArrowUpRight className="mr-2 h-4 w-4 text-primary" /> Export Pulse
                     </Button>
                     <Link to="/jobs">
-                        <Button className="rounded-lg px-6 h-10 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 shadow-sm text-white font-semibold text-sm transition-all">
-                            <PlusIcon className="mr-2 h-4 w-4" /> New Job
+                        <Button className="rounded-xl px-8 h-11 bg-cryshield-gradient hover:opacity-90 shadow-2xl shadow-primary/20 text-white font-black uppercase text-xs tracking-widest transition-all">
+                            <PlusIcon className="mr-2 h-4 w-4" /> Initialize Job
                         </Button>
                     </Link>
                 </div>
             </div>
 
-            {/* Metrics */}
+            {/* Metric Cards with staggered spring animations */}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                 {metrics.map((metric, i) => (
                     <MetricCard key={metric.title} {...metric} index={i} />
                 ))}
             </div>
 
-            {/* Charts + Activity */}
             <div className="grid gap-6 lg:grid-cols-7">
-                <Card className="lg:col-span-4 overflow-hidden border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/50 shadow-sm">
+                <Card className="lg:col-span-4 glass-card shadow-2xl overflow-hidden border-white/5">
                     <Tabs defaultValue="revenue" className="w-full">
-                        <CardHeader className="flex flex-row items-center justify-between p-6 pb-2">
+                        <CardHeader className="flex flex-row items-center justify-between p-8 pb-4">
                             <div className="space-y-1">
-                                <CardTitle className="text-lg font-bold text-slate-900 dark:text-white">Performance</CardTitle>
-                                <CardDescription className="text-sm text-slate-500 dark:text-slate-400">Weekly revenue and job volume</CardDescription>
+                                <CardTitle className="text-2xl font-black uppercase tracking-tighter">Analytics <span className="text-primary italic">Engine</span></CardTitle>
+                                <CardDescription className="font-bold opacity-60">Deep dive into your professional performance.</CardDescription>
                             </div>
-                            <TabsList className="bg-slate-100 dark:bg-slate-900 p-1 rounded-lg border border-slate-200/50 dark:border-slate-800">
-                                <TabsTrigger value="revenue" className="rounded-md px-4 py-1.5 text-xs font-semibold data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-sm transition-all">Revenue</TabsTrigger>
-                                <TabsTrigger value="volume" className="rounded-md px-4 py-1.5 text-xs font-semibold data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-sm transition-all">Volume</TabsTrigger>
+                            <TabsList className="bg-muted/50 p-1.5 rounded-2xl glass border border-white/5">
+                                <TabsTrigger value="revenue" className="rounded-xl px-6 py-2 text-[10px] font-black uppercase tracking-widest data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-xl transition-all">Revenue</TabsTrigger>
+                                <TabsTrigger value="volume" className="rounded-xl px-6 py-2 text-[10px] font-black uppercase tracking-widest data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-xl transition-all">Volume</TabsTrigger>
                             </TabsList>
                         </CardHeader>
                         <CardContent className="h-[350px] pt-4">
@@ -267,33 +251,43 @@ export default function Dashboard() {
                                     <AreaChart data={chartData}>
                                         <defs>
                                             <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="5%" stopColor="#0f172a" stopOpacity={0.08} />
-                                                <stop offset="95%" stopColor="#0f172a" stopOpacity={0} />
+                                                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.1} />
+                                                <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                                             </linearGradient>
                                         </defs>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" className="dark:opacity-20" />
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                         <XAxis
                                             dataKey="name"
                                             axisLine={false}
                                             tickLine={false}
-                                            tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }}
+                                            tick={{ fontSize: 11, fill: '#94a3b8', fontWeight: 600 }}
                                             dy={10}
                                         />
                                         <YAxis
                                             axisLine={false}
                                             tickLine={false}
-                                            tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }}
+                                            tick={{ fontSize: 11, fill: '#94a3b8', fontWeight: 600 }}
                                             tickFormatter={(value) => `$${value}`}
                                         />
-                                        <RechartsTooltip content={<CleanTooltip />} cursor={{ stroke: '#94a3b8', strokeWidth: 1 }} />
+                                        <RechartsTooltip
+                                            cursor={{ stroke: 'hsl(var(--primary))', strokeWidth: 1, strokeDasharray: '4 4' }}
+                                            contentStyle={{
+                                                borderRadius: '16px',
+                                                border: '1px solid #f1f5f9',
+                                                boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.05)',
+                                                padding: '12px',
+                                                fontSize: '12px',
+                                                fontWeight: 'bold'
+                                            }}
+                                        />
                                         <Area
                                             type="monotone"
                                             dataKey="revenue"
-                                            stroke="#0f172a"
-                                            strokeWidth={2}
+                                            stroke="hsl(187, 100%, 42%)"
+                                            strokeWidth={5}
                                             fillOpacity={1}
                                             fill="url(#colorRevenue)"
-                                            animationDuration={1500}
+                                            animationDuration={2000}
                                         />
                                     </AreaChart>
                                 </ResponsiveContainer>
@@ -301,27 +295,36 @@ export default function Dashboard() {
                             <TabsContent value="volume" className="h-full mt-0 outline-none">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={chartData}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" className="dark:opacity-20" />
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                         <XAxis
                                             dataKey="name"
                                             axisLine={false}
                                             tickLine={false}
-                                            tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }}
+                                            tick={{ fontSize: 11, fill: '#94a3b8', fontWeight: 600 }}
                                             dy={10}
                                         />
                                         <YAxis
                                             axisLine={false}
                                             tickLine={false}
-                                            tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }}
+                                            tick={{ fontSize: 11, fill: '#94a3b8', fontWeight: 600 }}
                                         />
-                                        <RechartsTooltip content={<VolumeTooltip />} cursor={{ fill: 'rgba(15, 23, 42, 0.03)' }} />
+                                        <RechartsTooltip
+                                            cursor={{ fill: 'rgba(99, 102, 241, 0.04)' }}
+                                            contentStyle={{
+                                                borderRadius: '16px',
+                                                border: '1px solid #f1f5f9',
+                                                boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.05)',
+                                                padding: '12px',
+                                                fontSize: '12px',
+                                                fontWeight: 'bold'
+                                            }}
+                                        />
                                         <Bar
                                             dataKey="jobs"
-                                            fill="#0f172a"
-                                            radius={[4, 4, 0, 0]}
-                                            barSize={28}
-                                            animationDuration={1200}
-                                            className="dark:[&>path]:fill-slate-200"
+                                            fill="hsl(var(--primary))"
+                                            radius={[6, 6, 0, 0]}
+                                            barSize={32}
+                                            animationDuration={1500}
                                         />
                                     </BarChart>
                                 </ResponsiveContainer>
@@ -330,34 +333,36 @@ export default function Dashboard() {
                     </Tabs>
                 </Card>
 
-                <Card className="lg:col-span-3 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/50 shadow-sm">
-                    <CardHeader className="p-6 border-b border-slate-100 dark:border-slate-800">
-                        <CardTitle className="text-lg font-bold text-slate-900 dark:text-white">Recent Activity</CardTitle>
-                        <CardDescription className="text-sm text-slate-500 dark:text-slate-400">Latest updates from your pipeline</CardDescription>
+                <Card className="lg:col-span-3 glass-card shadow-2xl border-white/5">
+                    <CardHeader className="p-8 border-b border-white/5">
+                        <CardTitle className="text-xl font-black uppercase tracking-tighter">Recent <span className="text-accent italic">Activity</span></CardTitle>
+                        <CardDescription className="font-bold opacity-60">Latest updates from your team and clients.</CardDescription>
                     </CardHeader>
                     <CardContent className="p-0">
                         {(() => {
                             const activities = [...(stats.todayJobs || [])];
+
                             const mockData = [
                                 { id: 'm1', title: 'System Maintenance', status: 'COMPLETED', clientName: 'Admin', scheduledDate: new Date(Date.now() - 3600000 * 2), isMock: true },
                                 { id: 'm2', title: 'Invoice Generated', status: 'PENDING', clientName: 'Finance', scheduledDate: new Date(Date.now() - 3600000 * 5), isMock: true },
                                 { id: 'm3', title: 'New Client Onboarded', status: 'COMPLETED', clientName: 'Sales', scheduledDate: new Date(Date.now() - 3600000 * 12), isMock: true },
                                 { id: 'm4', title: 'Welcome Email Sent', status: 'COMPLETED', clientName: 'System', scheduledDate: new Date(Date.now() - 3600000 * 24), isMock: true },
                             ];
+
                             while (activities.length < 5 && mockData.length > 0) {
                                 activities.push(mockData.shift());
                             }
 
                             return (
                                 <ScrollArea className="h-[350px] px-6">
-                                    <div className="space-y-1 py-2">
+                                    <div className="space-y-6 py-4">
                                         {activities.length === 0 ? (
                                             <div className="flex flex-col items-center justify-center py-12 text-center">
-                                                <div className="rounded-full bg-slate-50 dark:bg-slate-900 p-4 mb-4">
-                                                    <Search className="h-8 w-8 text-slate-300 dark:text-slate-600" />
+                                                <div className="rounded-full bg-slate-50 p-4 mb-4">
+                                                    <Search className="h-8 w-8 text-slate-300" />
                                                 </div>
-                                                <p className="text-sm font-semibold text-slate-900 dark:text-white">No recent activity</p>
-                                                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-[180px] mt-1">Events will appear here automatically.</p>
+                                                <p className="text-sm font-semibold text-slate-900">No recent activity</p>
+                                                <p className="text-xs text-slate-500 max-w-[180px] mt-1 italic">When events occur, they'll appear here automatically.</p>
                                             </div>
                                         ) : (
                                             <AnimatePresence mode="popLayout">
@@ -365,34 +370,47 @@ export default function Dashboard() {
                                                     <motion.div
                                                         key={job.id}
                                                         layout
-                                                        initial={{ opacity: 0, x: -10 }}
+                                                        initial={{ opacity: 0, x: -20 }}
                                                         animate={{ opacity: 1, x: 0 }}
-                                                        exit={{ opacity: 0, x: 10 }}
-                                                        transition={{ delay: idx * 0.04, type: "spring", stiffness: 300 }}
-                                                        className={cn(
-                                                            "flex items-center gap-3 py-3 px-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors",
-                                                            job.isMock && "opacity-60"
-                                                        )}
+                                                        exit={{ opacity: 0, x: 20 }}
+                                                        transition={{ delay: idx * 0.05, type: "spring", stiffness: 300 }}
+                                                        className={cn("flex items-start gap-4", job.isMock && "opacity-60")}
                                                     >
-                                                        <Avatar className="h-8 w-8 shrink-0">
-                                                            <AvatarFallback className={cn(
-                                                                "text-[10px] font-semibold",
-                                                                job.status === 'COMPLETED' ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400" :
-                                                                    job.status === 'IN_PROGRESS' ? "bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400" :
-                                                                        "bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400"
+                                                        <div className="relative shrink-0">
+                                                            <Avatar className="h-9 w-9 border-2 border-white shadow-sm">
+                                                                <AvatarFallback className={cn(
+                                                                    "text-[10px] font-bold",
+                                                                    job.status === 'COMPLETED' ? "bg-emerald-50 text-emerald-600" :
+                                                                        job.status === 'IN_PROGRESS' ? "bg-indigo-50 text-indigo-600" : "bg-amber-50 text-amber-600"
+                                                                )}>
+                                                                    {job.clientName?.substring(0, 2).toUpperCase() || "JD"}
+                                                                </AvatarFallback>
+                                                            </Avatar>
+                                                            <div className={cn(
+                                                                "absolute -bottom-1 -right-1 rounded-full p-0.5 border-2 border-white",
+                                                                job.status === 'COMPLETED' ? "bg-emerald-500" :
+                                                                    job.status === 'IN_PROGRESS' ? "bg-indigo-500" : "bg-amber-500"
                                                             )}>
-                                                                {job.clientName?.substring(0, 2).toUpperCase() || "JD"}
-                                                            </AvatarFallback>
-                                                        </Avatar>
+                                                                {job.status === 'COMPLETED' ? <CheckCircle2 className="h-2.5 w-2.5 text-white" /> :
+                                                                    job.status === 'IN_PROGRESS' ? <Clock className="h-2.5 w-2.5 text-white" /> :
+                                                                        <AlertCircle className="h-2.5 w-2.5 text-white" />
+                                                                }
+                                                            </div>
+                                                        </div>
                                                         <div className="flex-1 min-w-0">
-                                                            <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{job.title}</p>
-                                                            <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
-                                                                {job.isMock ? "System activity" : `Updated to ${job.status}`}
+                                                            <div className="flex items-center justify-between gap-2">
+                                                                <p className="text-sm font-bold text-slate-900 truncate">
+                                                                    {job.title}
+                                                                </p>
+                                                                <span className="text-[10px] font-medium text-slate-400 whitespace-nowrap uppercase tracking-tighter">
+                                                                    {job.scheduledDate ? new Date(job.scheduledDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Just now'}
+                                                                </span>
+                                                            </div>
+                                                            <p className="text-xs text-slate-500 truncate mt-0.5">
+                                                                {job.isMock ? "Activity recorded by system" : `Status updated to `}
+                                                                {!job.isMock && <span className="font-semibold text-slate-700">{job.status}</span>}
                                                             </p>
                                                         </div>
-                                                        <span className="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap">
-                                                            {job.scheduledDate ? new Date(job.scheduledDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Just now'}
-                                                        </span>
                                                     </motion.div>
                                                 ))}
                                             </AnimatePresence>
@@ -401,10 +419,10 @@ export default function Dashboard() {
                                 </ScrollArea>
                             );
                         })()}
-                        <div className="p-4 border-t border-slate-100 dark:border-slate-800">
-                            <Button variant="ghost" className="w-full text-sm text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors font-medium rounded-lg h-10">
-                                View all activity
-                                <ArrowUpRight className="ml-2 h-4 w-4" />
+                        <div className="px-8 pb-8">
+                            <Button variant="ghost" className="w-full mt-6 text-[10px] text-muted-foreground/60 hover:text-primary transition-all font-black uppercase tracking-[0.2em] border border-white/5 rounded-2xl py-8 hover:bg-white/5 group relative overflow-hidden">
+                                <span className="relative z-10 transition-transform group-hover:scale-110">View Full Activity Log</span>
+                                <div className="absolute inset-0 bg-primary/5 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                             </Button>
                         </div>
                     </CardContent>

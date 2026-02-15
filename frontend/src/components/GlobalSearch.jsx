@@ -8,8 +8,7 @@ import {
     PlusCircle,
     UserPlus,
     LogOut,
-    Search,
-    ArrowRight
+    Search
 } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import {
@@ -35,6 +34,7 @@ export function GlobalSearch() {
                 setOpen((open) => !open)
             }
         }
+
         document.addEventListener("keydown", down)
         return () => document.removeEventListener("keydown", down)
     }, [])
@@ -48,12 +48,12 @@ export function GlobalSearch() {
         <>
             <button
                 onClick={() => setOpen(true)}
-                className="relative flex h-9 w-full min-w-[260px] items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-950/10 dark:border-slate-800 dark:bg-slate-950/50 dark:text-slate-400 dark:hover:border-slate-700"
+                className="flex h-10 w-[300px] items-center gap-2 rounded-2xl border border-white/5 glass px-4 text-sm text-muted-foreground hover:bg-white/10 transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-lg shadow-black/5"
             >
-                <Search className="h-4 w-4" />
-                <span className="font-medium">Search...</span>
-                <kbd className="pointer-events-none absolute right-2.5 hidden h-5 select-none items-center gap-1 rounded border border-slate-200 bg-slate-50 px-1.5 font-mono text-[10px] font-medium text-slate-500 sm:flex dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
-                    <span className="text-xs">⌘</span>K
+                <Search className="h-4 w-4 text-primary" />
+                <span className="font-bold">Search workspace...</span>
+                <kbd className="pointer-events-none ml-auto inline-flex h-6 select-none items-center gap-1 rounded-lg bg-background/50 border border-white/5 px-1.5 font-mono text-[10px] font-black text-muted-foreground/60">
+                    <span className="text-[10px]">⌘</span>K
                 </kbd>
             </button>
 
@@ -79,11 +79,11 @@ export function GlobalSearch() {
                     <CommandGroup heading="Actions">
                         <CommandItem onSelect={() => runCommand(() => navigate("/jobs"))}>
                             <PlusCircle className="mr-2 h-4 w-4" />
-                            <span>New Job</span>
+                            <span>New Job Request</span>
                         </CommandItem>
                         <CommandItem onSelect={() => runCommand(() => navigate("/clients"))}>
                             <UserPlus className="mr-2 h-4 w-4" />
-                            <span>Add Client</span>
+                            <span>Onboard New Client</span>
                         </CommandItem>
                     </CommandGroup>
                     <CommandSeparator />
