@@ -10,9 +10,9 @@ import { ModeToggle } from "./ModeToggle"
 import { motion, AnimatePresence } from "framer-motion";
 
 const pageVariants = {
-    initial: { opacity: 0, y: 12 },
+    initial: { opacity: 0, y: 8 },
     animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -8 },
+    exit: { opacity: 0, y: -4 },
 };
 
 export default function Layout() {
@@ -20,25 +20,22 @@ export default function Layout() {
 
     return (
         <SidebarProvider>
-            {/* Midnight Ambient Glow Mesh (Dark Mode Only) */}
-            <div className="fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-teal-900/15 via-slate-950 to-slate-950 opacity-0 dark:opacity-100 transition-opacity duration-1000 pointer-events-none" />
-
             <AppSidebar />
-            <SidebarInset className="flex flex-col relative z-10">
-                <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-white/5 glass px-6">
+            <SidebarInset className="flex flex-col bg-slate-50 dark:bg-slate-950">
+                <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm px-6">
                     <div className="flex items-center gap-4">
-                        <SidebarTrigger className="h-9 w-9 text-muted-foreground hover:bg-muted transition-colors" />
-                        <div className="h-6 w-[1px] bg-border hidden md:block" />
+                        <SidebarTrigger className="h-8 w-8 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-900 rounded-md transition-colors" />
+                        <div className="h-5 w-[1px] bg-slate-200 dark:bg-slate-800 hidden md:block" />
                         <GlobalSearch />
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
                         <ModeToggle />
-                        <Button variant="ghost" size="icon" className="text-muted-foreground rounded-xl h-9 w-9 hover:bg-muted transition-all">
-                            <Bell className="h-5 w-5" />
+                        <Button variant="ghost" size="icon" className="text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-md h-8 w-8 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors">
+                            <Bell className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="text-muted-foreground rounded-xl h-9 w-9 hover:bg-muted transition-all">
-                            <HelpCircle className="h-5 w-5" />
+                        <Button variant="ghost" size="icon" className="text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-md h-8 w-8 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors">
+                            <HelpCircle className="h-4 w-4" />
                         </Button>
                     </div>
                 </header>
@@ -51,7 +48,7 @@ export default function Layout() {
                                 initial="initial"
                                 animate="animate"
                                 exit="exit"
-                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                transition={{ duration: 0.2, ease: "easeOut" }}
                             >
                                 <Outlet />
                             </motion.div>

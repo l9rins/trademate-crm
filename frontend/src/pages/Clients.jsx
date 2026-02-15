@@ -13,7 +13,7 @@ import {
     MoreHorizontal,
     UserPlus,
     Filter,
-    FileText,
+    Download,
     ArrowUpRight
 } from 'lucide-react';
 import { Button } from "@/components/ui/button"
@@ -71,14 +71,12 @@ export default function Clients() {
     const [searchTerm, setSearchTerm] = useState('');
     const [clientToDelete, setClientToDelete] = useState(null);
 
-    // React Query SWR fetch
     const { data: clients = [], isLoading } = useQuery({
         queryKey: ['clients'],
         queryFn: () => api.get('/clients').then(res => res.data),
         staleTime: 60_000,
     });
 
-    // Optimistic delete mutation
     const deleteMutation = useMutation({
         mutationFn: (id) => api.delete(`/clients/${id}`),
         onMutate: async (id) => {
@@ -89,32 +87,27 @@ export default function Clients() {
         },
         onError: (err, id, context) => {
             queryClient.setQueryData(['clients'], context.previous);
-            toast.error("Operation Denied", { description: "Unable to delete client record." });
+            toast.error("Failed to delete client.");
         },
         onSuccess: () => {
-            toast.success("Client Vault Updated", { description: "Client removed from the database." });
+            toast.success("Client removed successfully.");
         },
         onSettled: () => queryClient.invalidateQueries({ queryKey: ['clients'] }),
     });
 
-    // Create/update mutation
     const saveMutation = useMutation({
         mutationFn: (values) => editingClient
             ? api.put(`/clients/${editingClient.id}`, values)
             : api.post('/clients', values),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['clients'] });
-            toast.success(editingClient ? "Identity Updated" : "Entry Established", {
-                description: editingClient
-                    ? `Profile has been successfully refined.`
-                    : `Client has been officially onboarded.`
-            });
+            toast.success(editingClient ? "Client updated." : "Client created.");
             setIsSheetOpen(false);
             setEditingClient(null);
             formik.resetForm();
         },
         onError: () => {
-            toast.error("Validation Error", { description: "Client profiling failed. Please audit input fields." });
+            toast.error("Failed to save client. Please check your inputs.");
         }
     });
 
@@ -125,13 +118,7 @@ export default function Clients() {
     };
 
     const formik = useFormik({
-        initialValues: {
-            name: '',
-            email: '',
-            phone: '',
-            address: '',
-            notes: '',
-        },
+        initialValues: { name: '', email: '', phone: '', address: '', notes: '' },
         enableReinitialize: true,
         validationSchema: Yup.object({
             name: Yup.string().required('Required'),
@@ -164,32 +151,32 @@ export default function Clients() {
         <div className="space-y-6 animate-in fade-in duration-500">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
-                    <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase">Client <span className="text-primary italic">Directory</span></h2>
-                    <p className="text-muted-foreground font-bold uppercase tracking-widest text-xs opacity-70">Manage and monitor your customer relationships.</p>
+                    <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Clients</h2>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">Manage your customer relationships and contacts.</p>
                 </div>
-                <Button onClick={openNewClientSheet} className="shadow-2xl shadow-primary/20 rounded-xl px-8 h-12 bg-cryshield-gradient hover:opacity-90 text-white border-0 font-black uppercase text-xs tracking-widest transition-all">
-                    <UserPlus className="mr-2 h-4 w-4" /> Initialize Client Profile
+                <Button onClick={openNewClientSheet} className="rounded-lg px-6 h-10 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 shadow-sm text-white font-semibold text-sm transition-all">
+                    <UserPlus className="mr-2 h-4 w-4" /> Add Client
                 </Button>
             </div>
 
-            <Card className="glass-card shadow-2xl overflow-hidden border-white/5">
-                <CardHeader className="bg-muted/10 border-b border-white/5 py-6 px-8">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+            <Card className="overflow-hidden border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/50 shadow-sm">
+                <CardHeader className="bg-slate-50/50 dark:bg-slate-900/30 border-b border-slate-200 dark:border-slate-800 py-4 px-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="relative flex-1 max-w-md">
-                            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-primary" />
+                            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                             <Input
-                                placeholder="Search by name, email or phone..."
-                                className="pl-12 bg-background/50 border-white/10 rounded-xl focus:ring-primary/20 font-bold h-11"
+                                placeholder="Search by name, email, or phone..."
+                                className="pl-10 bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 rounded-lg h-10"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
-                        <div className="flex items-center gap-3">
-                            <Button variant="outline" size="sm" className="rounded-xl font-black uppercase text-[10px] tracking-widest border-white/10 glass hover:bg-muted/20 px-4 h-11">
-                                <Filter className="mr-2 h-4 w-4 text-primary" /> Filters
+                        <div className="flex items-center gap-2">
+                            <Button variant="outline" size="sm" className="rounded-lg font-medium text-sm border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 h-10 px-4">
+                                <Filter className="mr-2 h-4 w-4" /> Filters
                             </Button>
-                            <Button variant="outline" size="sm" className="rounded-xl font-black uppercase text-[10px] tracking-widest border-white/10 glass hover:bg-muted/20 px-4 h-11">
-                                <FileText className="mr-2 h-4 w-4 text-accent" /> Export Data
+                            <Button variant="outline" size="sm" className="rounded-lg font-medium text-sm border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 h-10 px-4">
+                                <Download className="mr-2 h-4 w-4" /> Export
                             </Button>
                         </div>
                     </div>
@@ -198,42 +185,39 @@ export default function Clients() {
                     <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
-                                <TableRow className="hover:bg-transparent bg-muted/5 border-b border-white/5">
-                                    <TableHead className="w-[280px] font-black uppercase tracking-widest text-[10px] text-muted-foreground/60 px-8 py-5">Profile Alias</TableHead>
-                                    <TableHead className="font-black uppercase tracking-widest text-[10px] text-muted-foreground/60 py-5">Communication Channels</TableHead>
-                                    <TableHead className="font-black uppercase tracking-widest text-[10px] text-muted-foreground/60 py-5">Base Zone</TableHead>
-                                    <TableHead className="font-black uppercase tracking-widest text-[10px] text-muted-foreground/60 py-5">Activity State</TableHead>
-                                    <TableHead className="text-right font-black uppercase tracking-widest text-[10px] text-muted-foreground/60 px-8 py-5">Operations</TableHead>
+                                <TableRow className="hover:bg-transparent bg-slate-50/50 dark:bg-slate-900/20 border-b border-slate-200 dark:border-slate-800">
+                                    <TableHead className="w-[280px] font-semibold text-xs text-slate-500 dark:text-slate-400 px-6 py-3">Client</TableHead>
+                                    <TableHead className="font-semibold text-xs text-slate-500 dark:text-slate-400 py-3">Contact</TableHead>
+                                    <TableHead className="font-semibold text-xs text-slate-500 dark:text-slate-400 py-3">Address</TableHead>
+                                    <TableHead className="font-semibold text-xs text-slate-500 dark:text-slate-400 py-3">Status</TableHead>
+                                    <TableHead className="text-right font-semibold text-xs text-slate-500 dark:text-slate-400 px-6 py-3">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {isLoading ? (
                                     Array.from({ length: 5 }).map((_, i) => (
-                                        <TableRow key={i}>
-                                            <TableCell className="py-4 text-left">
+                                        <TableRow key={i} className="border-b border-slate-100 dark:border-slate-800">
+                                            <TableCell className="py-4 px-6">
                                                 <div className="flex items-center gap-3">
-                                                    <Skeleton className="h-10 w-10 rounded-full" />
-                                                    <div className="space-y-2 text-left">
-                                                        <Skeleton className="h-4 w-24" />
-                                                        <Skeleton className="h-3 w-16" />
-                                                    </div>
+                                                    <Skeleton className="h-9 w-9 rounded-full" />
+                                                    <div className="space-y-1.5"><Skeleton className="h-4 w-24" /><Skeleton className="h-3 w-16" /></div>
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="py-4 text-left"><div className="space-y-2 text-left"><Skeleton className="h-3 w-32" /><Skeleton className="h-3 w-24" /></div></TableCell>
-                                            <TableCell className="py-4 text-left"><Skeleton className="h-4 w-40" /></TableCell>
-                                            <TableCell className="py-4 text-left"><Skeleton className="h-6 w-16 rounded-full" /></TableCell>
-                                            <TableCell className="text-right px-6"><Skeleton className="ml-auto h-8 w-8 rounded-full" /></TableCell>
+                                            <TableCell className="py-4"><Skeleton className="h-3 w-32" /></TableCell>
+                                            <TableCell className="py-4"><Skeleton className="h-3 w-40" /></TableCell>
+                                            <TableCell className="py-4"><Skeleton className="h-5 w-14 rounded-full" /></TableCell>
+                                            <TableCell className="py-4 text-right px-6"><Skeleton className="ml-auto h-8 w-8 rounded" /></TableCell>
                                         </TableRow>
                                     ))
                                 ) : filteredClients.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={5} className="h-48 text-center bg-card/30">
-                                            <div className="flex flex-col items-center justify-center text-muted-foreground">
-                                                <div className="rounded-full bg-muted/30 p-4 mb-4">
-                                                    <Search className="h-8 w-8 text-muted-foreground/30" />
+                                        <TableCell colSpan={5} className="h-48 text-center">
+                                            <div className="flex flex-col items-center justify-center">
+                                                <div className="rounded-full bg-slate-50 dark:bg-slate-900 p-4 mb-4">
+                                                    <Search className="h-8 w-8 text-slate-300 dark:text-slate-600" />
                                                 </div>
-                                                <p className="font-semibold text-foreground">No clients found</p>
-                                                <p className="text-sm">Try adding a new client to get started.</p>
+                                                <p className="font-semibold text-slate-900 dark:text-white">No clients found</p>
+                                                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Add a new client to get started.</p>
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -243,73 +227,67 @@ export default function Clients() {
                                             <motion.tr
                                                 key={client.id}
                                                 layout
-                                                initial={{ opacity: 0, y: 10 }}
+                                                initial={{ opacity: 0, y: 8 }}
                                                 animate={{ opacity: 1, y: 0 }}
-                                                exit={{ opacity: 0, x: -40, transition: { duration: 0.2 } }}
-                                                transition={{ delay: index * 0.03, type: "spring", stiffness: 300, damping: 30 }}
-                                                className="group hover:bg-muted/30 border-b border-border/30 transition-colors"
+                                                exit={{ opacity: 0, x: -30, transition: { duration: 0.15 } }}
+                                                transition={{ delay: index * 0.02, type: "spring", stiffness: 300, damping: 30 }}
+                                                className="group hover:bg-slate-50 dark:hover:bg-slate-900/30 border-b border-slate-100 dark:border-slate-800 transition-colors"
                                             >
-                                                <TableCell className="py-4">
+                                                <TableCell className="py-3.5 px-6">
                                                     <div className="flex items-center gap-3">
-                                                        <Avatar className="h-10 w-10 border-2 border-primary/20 shadow-sm shrink-0">
-                                                            <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-bold">
+                                                        <Avatar className="h-9 w-9 shrink-0">
+                                                            <AvatarFallback className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold">
                                                                 {getInitials(client.name)}
                                                             </AvatarFallback>
                                                         </Avatar>
                                                         <div className="flex flex-col min-w-0">
-                                                            <span className="text-sm font-bold text-foreground truncate">{client.name}</span>
-                                                            <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">ID: CL-{client.id.toString().padStart(4, '0')}</span>
+                                                            <span className="text-sm font-medium text-slate-900 dark:text-white truncate">{client.name}</span>
+                                                            <span className="text-xs text-slate-400 dark:text-slate-500">ID: {String(client.id).padStart(4, '0')}</span>
                                                         </div>
                                                     </div>
                                                 </TableCell>
-                                                <TableCell className="py-4">
-                                                    <div className="flex flex-col gap-1.5">
-                                                        <div className="flex items-center gap-2 text-muted-foreground">
-                                                            <div className="w-5 flex justify-center"><Mail className="h-3.5 w-3.5" /></div>
-                                                            <span className="text-xs font-medium truncate">{client.email || 'N/A'}</span>
+                                                <TableCell className="py-3.5">
+                                                    <div className="flex flex-col gap-1">
+                                                        <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
+                                                            <Mail className="h-3.5 w-3.5 shrink-0" />
+                                                            <span className="text-xs truncate">{client.email || '—'}</span>
                                                         </div>
-                                                        <div className="flex items-center gap-2 text-muted-foreground">
-                                                            <div className="w-5 flex justify-center"><Phone className="h-3.5 w-3.5" /></div>
-                                                            <span className="text-xs font-medium text-nowrap">{client.phone || 'N/A'}</span>
+                                                        <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400">
+                                                            <Phone className="h-3.5 w-3.5 shrink-0" />
+                                                            <span className="text-xs">{client.phone || '—'}</span>
                                                         </div>
                                                     </div>
                                                 </TableCell>
-                                                <TableCell className="py-4">
-                                                    <div className="flex items-start gap-2 text-muted-foreground max-w-[200px]">
-                                                        <div className="w-5 flex justify-center mt-0.5"><MapPin className="h-3.5 w-3.5" /></div>
-                                                        <span className="text-xs font-medium leading-relaxed line-clamp-2">{client.address || 'No address'}</span>
+                                                <TableCell className="py-3.5">
+                                                    <div className="flex items-start gap-1.5 text-slate-600 dark:text-slate-400 max-w-[200px]">
+                                                        <MapPin className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                                                        <span className="text-xs leading-relaxed line-clamp-2">{client.address || '—'}</span>
                                                     </div>
                                                 </TableCell>
                                                 <TableCell>
-                                                    <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-bold text-emerald-400 border border-emerald-500/20">
-                                                        ACTIVE
+                                                    <span className="inline-flex items-center rounded-full bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-400">
+                                                        Active
                                                     </span>
                                                 </TableCell>
                                                 <TableCell className="text-right px-6">
                                                     <DropdownMenu>
                                                         <DropdownMenuTrigger asChild>
-                                                            <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-muted/50 rounded-full">
+                                                            <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md">
                                                                 <MoreHorizontal className="h-4 w-4" />
                                                             </Button>
                                                         </DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="end" className="w-48 p-1">
-                                                            <DropdownMenuLabel>Client Management</DropdownMenuLabel>
+                                                        <DropdownMenuContent align="end" className="w-44">
+                                                            <DropdownMenuLabel className="text-xs font-semibold text-slate-500">Manage</DropdownMenuLabel>
                                                             <DropdownMenuSeparator />
                                                             <DropdownMenuItem onClick={() => handleEdit(client)} className="cursor-pointer">
-                                                                <Pencil className="mr-2 h-4 w-4 text-muted-foreground" />
-                                                                <span>Edit Profile</span>
+                                                                <Pencil className="mr-2 h-4 w-4" /> Edit
                                                             </DropdownMenuItem>
                                                             <DropdownMenuItem className="cursor-pointer">
-                                                                <ArrowUpRight className="mr-2 h-4 w-4 text-muted-foreground" />
-                                                                <span>View Jobs</span>
+                                                                <ArrowUpRight className="mr-2 h-4 w-4" /> View Jobs
                                                             </DropdownMenuItem>
                                                             <DropdownMenuSeparator />
-                                                            <DropdownMenuItem
-                                                                onClick={() => setClientToDelete(client)}
-                                                                className="text-rose-500 focus:bg-rose-500/10 focus:text-rose-500 cursor-pointer"
-                                                            >
-                                                                <Trash2 className="mr-2 h-4 w-4" />
-                                                                <span>Remove Client</span>
+                                                            <DropdownMenuItem onClick={() => setClientToDelete(client)} className="text-rose-600 focus:bg-rose-50 dark:focus:bg-rose-500/10 focus:text-rose-600 cursor-pointer">
+                                                                <Trash2 className="mr-2 h-4 w-4" /> Delete
                                                             </DropdownMenuItem>
                                                         </DropdownMenuContent>
                                                     </DropdownMenu>
@@ -325,46 +303,39 @@ export default function Clients() {
             </Card>
 
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-                <SheetContent side="right" className="sm:max-w-[450px]">
+                <SheetContent side="right" className="sm:max-w-[420px]">
                     <SheetHeader className="mb-6">
-                        <SheetTitle className="text-2xl font-bold">{editingClient ? 'Update Profile' : 'Register New Client'}</SheetTitle>
-                        <SheetDescription>
-                            {editingClient ? 'Refine the contact information and preferences for this client.' : 'Onboard a new client into your TradeMate pipeline.'}
+                        <SheetTitle className="text-xl font-bold text-slate-900 dark:text-white">{editingClient ? 'Edit Client' : 'New Client'}</SheetTitle>
+                        <SheetDescription className="text-slate-500 dark:text-slate-400">
+                            {editingClient ? 'Update the contact details for this client.' : 'Add a new client to your CRM.'}
                         </SheetDescription>
                     </SheetHeader>
 
-                    <form onSubmit={formik.handleSubmit} className="space-y-6 overflow-y-auto max-h-[calc(100vh-200px)] pr-2">
+                    <form onSubmit={formik.handleSubmit} className="space-y-5 overflow-y-auto max-h-[calc(100vh-200px)] pr-2">
                         <div className="space-y-2">
-                            <Label htmlFor="name" className="text-sm font-bold text-foreground/80">Client Name</Label>
-                            <Input id="name" placeholder="e.g. John Doe Plumbing" className="border-border focus:ring-primary/20" {...formik.getFieldProps('name')} />
+                            <Label htmlFor="name" className="text-sm font-medium text-slate-700 dark:text-slate-300">Name</Label>
+                            <Input id="name" placeholder="e.g. John Doe Plumbing" className="border-slate-200 dark:border-slate-800 rounded-lg h-10" {...formik.getFieldProps('name')} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="email" className="text-sm font-medium text-slate-700 dark:text-slate-300">Email</Label>
+                            <Input id="email" type="email" placeholder="john@example.com" className="border-slate-200 dark:border-slate-800 rounded-lg h-10" {...formik.getFieldProps('email')} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="phone" className="text-sm font-medium text-slate-700 dark:text-slate-300">Phone</Label>
+                            <Input id="phone" placeholder="+1 (555) 000-0000" className="border-slate-200 dark:border-slate-800 rounded-lg h-10" {...formik.getFieldProps('phone')} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="address" className="text-sm font-medium text-slate-700 dark:text-slate-300">Address</Label>
+                            <Textarea id="address" className="min-h-[80px] border-slate-200 dark:border-slate-800 rounded-lg" placeholder="Enter address..." {...formik.getFieldProps('address')} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="notes" className="text-sm font-medium text-slate-700 dark:text-slate-300">Notes</Label>
+                            <Textarea id="notes" {...formik.getFieldProps('notes')} className="min-h-[80px] border-slate-200 dark:border-slate-800 rounded-lg" placeholder="Internal notes..." />
                         </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="email" className="text-sm font-bold text-foreground/80">Email Address</Label>
-                            <Input id="email" type="email" placeholder="john@example.com" className="border-border focus:ring-primary/20" {...formik.getFieldProps('email')} />
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="phone" className="text-sm font-bold text-foreground/80">Phone Number</Label>
-                            <Input id="phone" placeholder="+1 (555) 000-0000" className="border-border focus:ring-primary/20" {...formik.getFieldProps('phone')} />
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="address" className="text-sm font-bold text-foreground/80">Primary Address</Label>
-                            <div className="relative">
-                                <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                <Textarea id="address" className="pl-10 min-h-[80px] border-border focus:ring-primary/20" placeholder="Enter physical location..." {...formik.getFieldProps('address')} />
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="notes" className="text-sm font-bold text-foreground/80">Internal Background Notes</Label>
-                            <Textarea id="notes" {...formik.getFieldProps('notes')} className="min-h-[100px] border-border focus:ring-primary/20" placeholder="Important details about this client..." />
-                        </div>
-
-                        <SheetFooter className="pt-8">
-                            <Button type="submit" disabled={saveMutation.isPending} className="w-full h-12 rounded-xl shadow-2xl shadow-primary/20 font-black uppercase text-xs tracking-[0.2em] bg-cryshield-gradient hover:opacity-90 text-white border-0 transition-all">
-                                {saveMutation.isPending ? 'Syncing...' : editingClient ? 'Sync Identity' : 'Onboard Profile'}
+                        <SheetFooter className="pt-6">
+                            <Button type="submit" disabled={saveMutation.isPending} className="w-full h-10 rounded-lg font-semibold bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 shadow-sm text-white text-sm">
+                                {saveMutation.isPending ? 'Saving...' : editingClient ? 'Save Changes' : 'Create Client'}
                             </Button>
                         </SheetFooter>
                     </form>
@@ -374,18 +345,15 @@ export default function Clients() {
             <AlertDialog open={!!clientToDelete} onOpenChange={() => setClientToDelete(null)}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogTitle>Delete client?</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This will permanently remove <span className="font-bold text-foreground">"{clientToDelete?.name}"</span> and all associated data from the CRM. This action cannot be undone.
+                            This will permanently remove <span className="font-semibold text-slate-900 dark:text-white">"{clientToDelete?.name}"</span> and all associated data. This action cannot be undone.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                            onClick={handleDelete}
-                            className="bg-rose-600 hover:bg-rose-700 rounded-xl"
-                        >
-                            Delete Client
+                        <AlertDialogCancel className="rounded-lg">Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDelete} className="bg-rose-600 hover:bg-rose-700 rounded-lg">
+                            Delete
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
