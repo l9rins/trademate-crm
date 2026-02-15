@@ -147,25 +147,46 @@ const DashboardSkeleton = () => (
 
 export default function Dashboard() {
     // ⚡ React Query SWR — instant cache hits, background refetch
-    const { data: stats, isLoading, isFetching } = useQuery({
+    const { data: apiData, isLoading, isFetching, isError } = useQuery({
         queryKey: ['dashboardStats'],
         queryFn: () => api.get('/dashboard').then(res => res.data),
         staleTime: 60_000,       // 1 minute — data stays fresh
-        placeholderData: {       // Show zeros instead of undefined on first mount
-            totalJobs: 0,
-            pendingJobs: 0,
-            completedJobs: 0,
-            todayJobs: [],
-        },
+        retry: 1,
     });
 
+    // Fallback stats to prevent crash if apiData is undefined
+    const stats = apiData || {
+        totalJobs: 0,
+        pendingJobs: 0,
+        completedJobs: 0,
+        todayJobs: [],
+    };
+
     // Only show skeleton on absolute first load (no cached data)
-    if (isLoading && !stats?.totalJobs) return <DashboardSkeleton />;
+    if (isLoading && !apiData) return <DashboardSkeleton />;
+
+    if (isError) {
+        return (
+            <div className="flex flex-col items-center justify-center p-12 text-center glass-card m-8">
+                <div className="rounded-full bg-rose-500/10 p-4 mb-4">
+                    <AlertCircle className="h-8 w-8 text-rose-500" />
+                </div>
+                <h3 className="text-xl font-black text-foreground uppercase tracking-tighter">Unable to load metrics</h3>
+                <p className="text-muted-foreground text-sm font-medium mt-2 max-w-sm">We're having trouble connecting to the intelligence engine. Please check your connection and try again.</p>
+                <Button
+                    onClick={() => window.location.reload()}
+                    className="mt-6 bg-cryshield-gradient px-8 py-2 font-black uppercase text-xs tracking-widest text-white rounded-xl"
+                >
+                    Retry Connection
+                </Button>
+            </div>
+        );
+    }
 
     const metrics = [
-        { title: "Total Active Jobs", value: stats.totalJobs, subtext: "Jobs currently in pipeline", icon: Briefcase, trend: "up", trendValue: "+12.5%" },
-        { title: "Pending Review", value: stats.pendingJobs, subtext: "Awaiting client approval", icon: Clock, trend: "down", trendValue: "-2%" },
-        { title: "Completed Jobs", value: stats.completedJobs, subtext: "Total finished this month", icon: CheckCircle2, trend: "up", trendValue: "+5.2%" },
+        { title: "Total Active Jobs", value: stats.totalJobs || 0, subtext: "Jobs currently in pipeline", icon: Briefcase, trend: "up", trendValue: "+12.5%" },
+        { title: "Pending Review", value: stats.pendingJobs || 0, subtext: "Awaiting client approval", icon: Clock, trend: "down", trendValue: "-2%" },
+        { title: "Completed Jobs", value: stats.completedJobs || 0, subtext: "Total finished this month", icon: CheckCircle2, trend: "up", trendValue: "+5.2%" },
         { title: "Retention Rate", value: "98.2%", subtext: "Customer satisfaction score", icon: Users },
     ];
 
