@@ -20,50 +20,50 @@ export default function Settings() {
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight text-slate-900 font-outfit">Workspace Settings</h1>
-                <p className="text-slate-500 font-medium">Configure your personal profile and application preferences.</p>
+                <h1 className="text-4xl font-black tracking-tighter text-foreground uppercase">Workspace <span className="text-primary italic">Settings</span></h1>
+                <p className="text-muted-foreground font-bold uppercase tracking-widest text-xs opacity-70">Configure your personal profile and application preferences.</p>
             </div>
 
             <Tabs defaultValue="profile" className="w-full">
-                <TabsList className="bg-slate-100/80 p-1 rounded-xl mb-8">
-                    <TabsTrigger value="profile" className="rounded-lg px-6 py-2 text-sm font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                <TabsList className="bg-muted/30 p-1 rounded-xl mb-8 border border-white/5">
+                    <TabsTrigger value="profile" className="rounded-lg px-6 py-2 text-sm font-bold data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-foreground">
                         <User className="mr-2 h-4 w-4" /> Profile
                     </TabsTrigger>
-                    <TabsTrigger value="security" className="rounded-lg px-6 py-2 text-sm font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                    <TabsTrigger value="security" className="rounded-lg px-6 py-2 text-sm font-bold data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-foreground">
                         <Shield className="mr-2 h-4 w-4" /> Security
                     </TabsTrigger>
-                    <TabsTrigger value="notifications" className="rounded-lg px-6 py-2 text-sm font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                    <TabsTrigger value="notifications" className="rounded-lg px-6 py-2 text-sm font-bold data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-foreground">
                         <Bell className="mr-2 h-4 w-4" /> Notifications
                     </TabsTrigger>
-                    <TabsTrigger value="billing" className="rounded-lg px-6 py-2 text-sm font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                    <TabsTrigger value="billing" className="rounded-lg px-6 py-2 text-sm font-bold data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-foreground">
                         <CreditCard className="mr-2 h-4 w-4" /> Billing
                     </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="profile" className="mt-0 outline-none">
                     <div className="grid gap-6 md:grid-cols-2">
-                        <Card className="border-slate-200/60 shadow-sm overflow-hidden md:col-span-2">
-                            <CardHeader className="bg-slate-50/50 border-b border-slate-100">
-                                <CardTitle>Personal Information</CardTitle>
+                        <Card className="glass-card overflow-hidden md:col-span-2 border-white/5">
+                            <CardHeader className="bg-muted/10 border-b border-white/5">
+                                <CardTitle className="text-foreground">Personal Information</CardTitle>
                                 <CardDescription>Update your avatar and identity across the TradeMate network.</CardDescription>
                             </CardHeader>
                             <CardContent className="p-8">
                                 <div className="space-y-6 max-w-2xl">
                                     <div className="flex flex-col md:flex-row gap-6">
                                         <div className="space-y-2 flex-1">
-                                            <Label htmlFor="username" className="text-sm font-bold text-slate-700">Username</Label>
-                                            <Input id="username" defaultValue={user?.username} className="border-slate-200 h-11" />
+                                            <Label htmlFor="username" className="text-sm font-bold text-foreground/80">Username</Label>
+                                            <Input id="username" defaultValue={user?.username} className="border-border h-11 bg-background/50" />
                                         </div>
                                         <div className="space-y-2 flex-1">
-                                            <Label htmlFor="email" className="text-sm font-bold text-slate-700">Email Address</Label>
-                                            <Input id="email" type="email" defaultValue={user?.email} className="border-slate-200 h-11" />
+                                            <Label htmlFor="email" className="text-sm font-bold text-foreground/80">Email Address</Label>
+                                            <Input id="email" type="email" defaultValue={user?.email} className="border-border h-11 bg-background/50" />
                                         </div>
                                     </div>
                                     <div className="space-y-2">
-                                        <Label htmlFor="bio" className="text-sm font-bold text-slate-700">Professional Bio</Label>
-                                        <Input id="bio" placeholder="e.g. Master Plumber at TradeMate Solutions" className="border-slate-200 h-11" />
+                                        <Label htmlFor="bio" className="text-sm font-bold text-foreground/80">Professional Bio</Label>
+                                        <Input id="bio" placeholder="e.g. Master Plumber at TradeMate Solutions" className="border-border h-11 bg-background/50" />
                                     </div>
-                                    <Button onClick={handleSave} className="bg-gradient-to-r from-primary to-indigo-600 rounded-xl px-8 h-11 font-bold shadow-lg shadow-primary/20 hover:opacity-90 border-0">
+                                    <Button onClick={handleSave} className="bg-cryshield-gradient hover:opacity-90 rounded-xl px-8 h-11 font-black uppercase text-xs tracking-widest shadow-lg shadow-primary/20 border-0 text-white">
                                         <Save className="mr-2 h-4 w-4" /> Save Changes
                                     </Button>
                                 </div>
@@ -73,22 +73,22 @@ export default function Settings() {
                 </TabsContent>
 
                 <TabsContent value="security" className="mt-0 outline-none">
-                    <Card className="border-slate-200/60 shadow-sm overflow-hidden">
-                        <CardHeader className="bg-slate-50/50 border-b border-slate-100">
-                            <CardTitle>Security Preferences</CardTitle>
+                    <Card className="glass-card overflow-hidden border-white/5">
+                        <CardHeader className="bg-muted/10 border-b border-white/5">
+                            <CardTitle className="text-foreground">Security Preferences</CardTitle>
                             <CardDescription>Manage your password and active session protocols.</CardDescription>
                         </CardHeader>
                         <CardContent className="p-8">
                             <div className="space-y-6 max-w-md">
                                 <div className="space-y-2">
-                                    <Label className="text-sm font-bold text-slate-700">Current Password</Label>
-                                    <Input type="password" placeholder="••••••••" className="border-slate-200 h-11" />
+                                    <Label className="text-sm font-bold text-foreground/80">Current Password</Label>
+                                    <Input type="password" placeholder="••••••••" className="border-border h-11 bg-background/50" />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-sm font-bold text-slate-700">New Password</Label>
-                                    <Input type="password" placeholder="Enter new password" className="border-slate-200 h-11" />
+                                    <Label className="text-sm font-bold text-foreground/80">New Password</Label>
+                                    <Input type="password" placeholder="Enter new password" className="border-border h-11 bg-background/50" />
                                 </div>
-                                <Button className="bg-slate-900 hover:bg-slate-800 text-white rounded-xl px-8 h-11 font-bold">
+                                <Button className="bg-foreground hover:bg-foreground/90 text-background rounded-xl px-8 h-11 font-bold">
                                     Update Credentials
                                 </Button>
                             </div>
@@ -97,32 +97,32 @@ export default function Settings() {
                 </TabsContent>
 
                 <TabsContent value="notifications" className="mt-0 outline-none">
-                    <Card className="border-slate-200/60 shadow-sm overflow-hidden">
-                        <CardHeader className="bg-slate-50/50 border-b border-slate-100">
-                            <CardTitle>Notification Center</CardTitle>
+                    <Card className="glass-card overflow-hidden border-white/5">
+                        <CardHeader className="bg-muted/10 border-b border-white/5">
+                            <CardTitle className="text-foreground">Notification Center</CardTitle>
                             <CardDescription>Choose how you receive updates and job alerts.</CardDescription>
                         </CardHeader>
                         <CardContent className="p-8">
                             <div className="space-y-4">
-                                <p className="text-sm text-slate-500 italic">Advanced notification settings coming soon in the Enterprise expansion.</p>
+                                <p className="text-sm text-muted-foreground italic">Advanced notification settings coming soon in the Enterprise expansion.</p>
                             </div>
                         </CardContent>
                     </Card>
                 </TabsContent>
 
                 <TabsContent value="billing" className="mt-0 outline-none">
-                    <Card className="border-slate-200/60 shadow-sm overflow-hidden">
-                        <CardHeader className="bg-slate-50/50 border-b border-slate-100">
-                            <CardTitle>Plan & Billing</CardTitle>
+                    <Card className="glass-card overflow-hidden border-white/5">
+                        <CardHeader className="bg-muted/10 border-b border-white/5">
+                            <CardTitle className="text-foreground">Plan & Billing</CardTitle>
                             <CardDescription>Manage your subscription and vault usage.</CardDescription>
                         </CardHeader>
                         <CardContent className="p-8">
-                            <div className="rounded-2xl bg-indigo-50/50 border border-indigo-100 p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                            <div className="rounded-2xl bg-primary/5 border border-primary/10 p-6 flex flex-col md:flex-row items-center justify-between gap-4">
                                 <div className="space-y-1">
-                                    <h4 className="font-bold text-indigo-900">Premium Professional</h4>
-                                    <p className="text-sm text-indigo-700">Unlimited clients, jobs, and AI analytics.</p>
+                                    <h4 className="font-bold text-foreground">Premium Professional</h4>
+                                    <p className="text-sm text-muted-foreground">Unlimited clients, jobs, and AI analytics.</p>
                                 </div>
-                                <Button variant="outline" className="border-indigo-200 text-indigo-700 hover:bg-indigo-100 rounded-xl font-bold">
+                                <Button variant="outline" className="border-primary/20 text-primary hover:bg-primary/10 rounded-xl font-bold">
                                     Manage Subscription
                                 </Button>
                             </div>

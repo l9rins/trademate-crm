@@ -1,14 +1,23 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Toaster } from "@/components/ui/sonner"
 import { GlobalSearch } from "./GlobalSearch"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "./AppSidebar"
-import { Search, Bell, HelpCircle } from "lucide-react"
+import { Bell, HelpCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "./ModeToggle"
+import { motion, AnimatePresence } from "framer-motion";
+
+const pageVariants = {
+    initial: { opacity: 0, y: 12 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -8 },
+};
 
 export default function Layout() {
+    const location = useLocation();
+
     return (
         <SidebarProvider>
             {/* Midnight Ambient Glow Mesh (Dark Mode Only) */}
@@ -35,7 +44,18 @@ export default function Layout() {
                 </header>
                 <main className="flex-1 p-6 md:p-8">
                     <div className="mx-auto max-w-6xl">
-                        <Outlet />
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={location.pathname}
+                                variants={pageVariants}
+                                initial="initial"
+                                animate="animate"
+                                exit="exit"
+                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                            >
+                                <Outlet />
+                            </motion.div>
+                        </AnimatePresence>
                     </div>
                 </main>
             </SidebarInset>
