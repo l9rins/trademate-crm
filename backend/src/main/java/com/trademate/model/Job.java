@@ -9,6 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "jobs")
 @EntityListeners(AuditingEntityListener.class)
-public class Job {
+public class Job implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
