@@ -1,11 +1,13 @@
 package com.trademate.service;
 
+import com.trademate.exception.EntityNotFoundException;
 import com.trademate.model.Job;
 import com.trademate.model.JobStatus;
 import com.trademate.repository.ClientRepository;
 import com.trademate.repository.JobRepository;
 import com.trademate.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,28 +19,23 @@ public class JobService {
 
     private final JobRepository jobRepository;
     private final UserRepository userRepository;
-    private final ClientRepository clientRepository; // Needed if linking client
+    private final ClientRepository clientRepository;
 
     public List<Job> getJobs(String username) {
         var user = userRepository.findByUsername(username).orElseThrow();
         return jobRepository.findByUserId(user.getId());
     }
 
+    @CacheEvict(value = "dashboardStats", key = "#username")
     public Job createJob(String username, Job jobRequest) {
         var user = userRepository.findByUsername(username).orElseThrow();
         jobRequest.setUser(user);
 
-        // If client ID is passed, we should link it.
-        // For MVP, assuming jobRequest has only client_id in JSON ?
-        // No, JPA expects Client object. The DTO usually handles this conversion.
-        // I will assume for MVP we are just saving what we get, but if client is null
-        // it works.
-        // If client is passed with ID only?
-        // Let's implement a quick fix: if jobRequest.getClient() != null &&
-        // jobRequest.getClient().getId() != null
+        // Safe client lookup — throws 404 instead of silently passing null
         if (jobRequest.getClient() != null && jobRequest.getClient().getId() != null) {
-            var client = clientRepository.findById(jobRequest.getClient().getId()).orElse(null);
-            jobRequest.setClient(client);
+            jobRequest.setClient(clientRepository.findById(jobRequest.getClient().getId())
+                    .orElseThrow(() -> new EntityNotFoundException(
+                            "Client not found with ID: " + jobRequest.getClient().getId())));
         }
 
         jobRequest.setCreatedAt(LocalDateTime.now());
@@ -49,8 +46,10 @@ public class JobService {
         return jobRepository.save(jobRequest);
     }
 
+    @CacheEvict(value = "dashboardStats", allEntries = true)
     public Job updateJob(Long id, Job jobRequest) {
-        var job = jobRepository.findById(id).orElseThrow(() -> new RuntimeException("Job not found"));
+        var job = jobRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Job not found with ID: " + id));
         job.setTitle(jobRequest.getTitle());
         job.setDescription(jobRequest.getDescription());
         job.setAddress(jobRequest.getAddress());
@@ -61,6 +60,7 @@ public class JobService {
         return jobRepository.save(job);
     }
 
+    @CacheEvict(value = "dashboardStats", allEntries = true)
     public void deleteJob(Long id) {
         jobRepository.deleteById(id);
     }

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import api from '../lib/api';
@@ -74,62 +75,109 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { motion, AnimatePresence } from "framer-motion";
 
 const JOB_STATUSES = ['PENDING', 'IN_PROGRESS', 'COMPLETED'];
 
 export default function Jobs() {
-    const [jobs, setJobs] = useState([]);
-    const [clients, setClients] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const queryClient = useQueryClient();
     const [editingJob, setEditingJob] = useState(null);
     const [isSheetOpen, setIsSheetOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [jobToDelete, setJobToDelete] = useState(null);
 
-    const fetchJobs = async () => {
-        try {
-            setLoading(true);
-            const response = await api.get('/jobs');
-            setJobs(response.data);
-        } catch (error) {
-            toast.error("Failed to sync jobs", {
-                description: "The connection to the analytics engine was interrupted."
-            });
-        } finally {
-            setLoading(false);
-        }
-    };
+    // ⚡ React Query — SWR for jobs
+    const { data: jobs = [], isLoading: loading } = useQuery({
+        queryKey: ['jobs'],
+        queryFn: () => api.get('/jobs').then(res => res.data),
+        staleTime: 30_000,
+    });
 
-    const fetchClients = async () => {
-        try {
-            const response = await api.get('/clients');
-            setClients(response.data);
-        } catch (error) {
-            console.error("Error fetching clients", error);
-        }
-    }
+    // ⚡ React Query — SWR for clients
+    const { data: clients = [] } = useQuery({
+        queryKey: ['clients'],
+        queryFn: () => api.get('/clients').then(res => res.data),
+        staleTime: 60_000,
+    });
 
-    useEffect(() => {
-        fetchJobs();
-        fetchClients();
-    }, []);
-
-    const handleDelete = async () => {
-        if (!jobToDelete) return;
-        try {
-            await api.delete(`/jobs/${jobToDelete.id}`);
-            fetchJobs();
-            toast.success("Job decommissioned", {
-                description: `"${jobToDelete.title}" has been removed from the pipeline.`
-            });
-        } catch (err) {
+    // ⚡ Optimistic Delete — job disappears instantly
+    const deleteMutation = useMutation({
+        mutationFn: (id) => api.delete(`/jobs/${id}`),
+        onMutate: async (id) => {
+            await queryClient.cancelQueries({ queryKey: ['jobs'] });
+            const previousJobs = queryClient.getQueryData(['jobs']);
+            queryClient.setQueryData(['jobs'], (old) =>
+                (old || []).filter(j => j.id !== id)
+            );
+            return { previousJobs };
+        },
+        onError: (err, id, context) => {
+            queryClient.setQueryData(['jobs'], context.previousJobs);
             toast.error("Operation failed", {
                 description: "The job could not be deleted at this time."
             });
-        } finally {
-            setJobToDelete(null);
-        }
-    }
+        },
+        onSuccess: (_, id) => {
+            toast.success("Job decommissioned", {
+                description: `Job has been removed from the pipeline.`
+            });
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['jobs'] });
+            queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
+        },
+    });
+
+    // ⚡ Optimistic Create/Update — job appears instantly in the list
+    const saveMutation = useMutation({
+        mutationFn: ({ id, payload }) => {
+            if (id) {
+                return api.put(`/jobs/${id}`, payload).then(res => res.data);
+            }
+            return api.post('/jobs', payload).then(res => res.data);
+        },
+        onMutate: async ({ id, payload }) => {
+            await queryClient.cancelQueries({ queryKey: ['jobs'] });
+            const previousJobs = queryClient.getQueryData(['jobs']);
+
+            if (!id) {
+                // Optimistic create — add temp job with negative ID
+                const tempJob = {
+                    id: -Date.now(),
+                    ...payload,
+                    client: payload.client ? clients.find(c => c.id?.toString() === payload.client?.id?.toString()) : null,
+                    status: payload.status || 'PENDING',
+                    createdAt: new Date().toISOString(),
+                    _optimistic: true,
+                };
+                queryClient.setQueryData(['jobs'], (old) => [tempJob, ...(old || [])]);
+            }
+            return { previousJobs };
+        },
+        onError: (err, variables, context) => {
+            queryClient.setQueryData(['jobs'], context.previousJobs);
+            toast.error("Process error", {
+                description: "Failed to save job details. Please check your data."
+            });
+        },
+        onSuccess: (data, { id }) => {
+            toast.success(id ? "Job updated" : "Job initialized", {
+                description: id
+                    ? `Successfully refined details for "${data.title}".`
+                    : `"${data.title}" has been added to the pipeline.`
+            });
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['jobs'] });
+            queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
+        },
+    });
+
+    const handleDelete = () => {
+        if (!jobToDelete) return;
+        deleteMutation.mutate(jobToDelete.id);
+        setJobToDelete(null);
+    };
 
     const formik = useFormik({
         initialValues: {
@@ -146,33 +194,22 @@ export default function Jobs() {
             status: Yup.string().required('Required'),
         }),
         onSubmit: async (values, { resetForm }) => {
-            try {
-                const payload = {
-                    ...values,
-                    client: values.clientId ? { id: values.clientId } : null,
-                    scheduledDate: values.scheduledDate ? format(new Date(values.scheduledDate), "yyyy-MM-dd'T'HH:mm:ss") : null
-                };
+            const payload = {
+                ...values,
+                client: values.clientId ? { id: values.clientId } : null,
+                scheduledDate: values.scheduledDate ? format(new Date(values.scheduledDate), "yyyy-MM-dd'T'HH:mm:ss") : null
+            };
 
-                if (editingJob) {
-                    await api.put(`/jobs/${editingJob.id}`, payload);
-                    toast.success("Job updated", {
-                        description: `Successfully refined details for "${values.title}".`
-                    });
-                } else {
-                    await api.post('/jobs', payload);
-                    toast.success("Job initialized", {
-                        description: `"${values.title}" has been added to the pipeline.`
-                    });
+            saveMutation.mutate(
+                { id: editingJob?.id, payload },
+                {
+                    onSuccess: () => {
+                        setIsSheetOpen(false);
+                        setEditingJob(null);
+                        resetForm();
+                    },
                 }
-                fetchJobs();
-                setIsSheetOpen(false);
-                setEditingJob(null);
-                resetForm();
-            } catch (error) {
-                toast.error("Process error", {
-                    description: "Failed to save job details. Please check your data."
-                });
-            }
+            );
         },
     });
 
@@ -278,79 +315,91 @@ export default function Jobs() {
                                         </TableCell>
                                     </TableRow>
                                 ) : (
-                                    filteredJobs.map((job) => (
-                                        <TableRow key={job.id} className="group hover:bg-muted/50 border-b border-slate-100/50 transition-colors">
-                                            <TableCell className="py-4">
-                                                <div className="flex flex-col">
-                                                    <span className="font-bold text-slate-900 text-sm line-clamp-1">{job.title}</span>
-                                                    <span className="text-[10px] text-slate-400 font-medium uppercase tracking-tighter">REF: JOB-{job.id.toString().padStart(4, '0')}</span>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <Avatar className="h-8 w-8 border-2 border-white shadow-sm shrink-0">
-                                                        <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-bold">
-                                                            {job.client?.name?.substring(0, 2).toUpperCase() || "JD"}
-                                                        </AvatarFallback>
-                                                    </Avatar>
-                                                    <div className="flex flex-col min-w-0">
-                                                        <span className="text-xs font-bold text-slate-900 truncate">{job.client?.name || 'No Client'}</span>
-                                                        <span className="text-[10px] text-slate-400 truncate italic">Client Account</span>
+                                    <AnimatePresence mode="popLayout">
+                                        {filteredJobs.map((job) => (
+                                            <motion.tr
+                                                key={job.id}
+                                                layout
+                                                initial={{ opacity: 0, y: -10 }}
+                                                animate={{ opacity: job._optimistic ? 0.7 : 1, y: 0 }}
+                                                exit={{ opacity: 0, x: -100, height: 0 }}
+                                                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                                className="group hover:bg-muted/50 border-b border-slate-100/50 transition-colors"
+                                            >
+                                                <TableCell className="py-4">
+                                                    <div className="flex flex-col">
+                                                        <span className="font-bold text-slate-900 text-sm line-clamp-1">{job.title}</span>
+                                                        <span className="text-[10px] text-slate-400 font-medium uppercase tracking-tighter">
+                                                            {job._optimistic ? 'SYNCING...' : `REF: JOB-${job.id.toString().padStart(4, '0')}`}
+                                                        </span>
                                                     </div>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="py-4">
-                                                <StatusBadge status={job.status} />
-                                            </TableCell>
-                                            <TableCell className="py-4">
-                                                <div className="flex items-center gap-2 text-slate-600">
-                                                    <div className="w-5 flex justify-center">
-                                                        <CalendarDays className="h-3.5 w-3.5 text-slate-400" />
+                                                </TableCell>
+                                                <TableCell className="py-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <Avatar className="h-8 w-8 border-2 border-white shadow-sm shrink-0">
+                                                            <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-bold">
+                                                                {job.client?.name?.substring(0, 2).toUpperCase() || "JD"}
+                                                            </AvatarFallback>
+                                                        </Avatar>
+                                                        <div className="flex flex-col min-w-0">
+                                                            <span className="text-xs font-bold text-slate-900 truncate">{job.client?.name || 'No Client'}</span>
+                                                            <span className="text-[10px] text-slate-400 truncate italic">Client Account</span>
+                                                        </div>
                                                     </div>
-                                                    <span className="text-xs font-medium">
-                                                        {job.scheduledDate ? format(new Date(job.scheduledDate), "MMM dd, yyyy") : '-'}
-                                                    </span>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="py-4">
-                                                <div className="flex items-start gap-2 text-slate-600 max-w-[200px]">
-                                                    <div className="w-5 flex justify-center mt-0.5">
-                                                        <MapPin className="h-3.5 w-3.5 text-slate-400" />
+                                                </TableCell>
+                                                <TableCell className="py-4">
+                                                    <StatusBadge status={job.status} />
+                                                </TableCell>
+                                                <TableCell className="py-4">
+                                                    <div className="flex items-center gap-2 text-slate-600">
+                                                        <div className="w-5 flex justify-center">
+                                                            <CalendarDays className="h-3.5 w-3.5 text-slate-400" />
+                                                        </div>
+                                                        <span className="text-xs font-medium">
+                                                            {job.scheduledDate ? format(new Date(job.scheduledDate), "MMM dd, yyyy") : '-'}
+                                                        </span>
                                                     </div>
-                                                    <span className="text-xs font-medium leading-relaxed line-clamp-1">{job.address || '-'}</span>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="text-right px-6">
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-200/50 rounded-full">
-                                                            <MoreHorizontal className="h-4 w-4" />
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end" className="w-48 p-1">
-                                                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                        <DropdownMenuSeparator />
-                                                        <DropdownMenuItem onClick={() => handleEdit(job)} className="cursor-pointer">
-                                                            <Pencil className="mr-2 h-4 w-4 text-slate-400" />
-                                                            <span>Edit Details</span>
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem className="cursor-pointer">
-                                                            <ArrowUpRight className="mr-2 h-4 w-4 text-slate-400" />
-                                                            <span>View Details</span>
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuSeparator />
-                                                        <DropdownMenuItem
-                                                            onClick={() => setJobToDelete(job)}
-                                                            className="text-rose-600 focus:bg-rose-50 focus:text-rose-600 cursor-pointer"
-                                                        >
-                                                            <Trash2 className="mr-2 h-4 w-4" />
-                                                            <span>Delete Job</span>
-                                                        </DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
+                                                </TableCell>
+                                                <TableCell className="py-4">
+                                                    <div className="flex items-start gap-2 text-slate-600 max-w-[200px]">
+                                                        <div className="w-5 flex justify-center mt-0.5">
+                                                            <MapPin className="h-3.5 w-3.5 text-slate-400" />
+                                                        </div>
+                                                        <span className="text-xs font-medium leading-relaxed line-clamp-1">{job.address || '-'}</span>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell className="text-right px-6">
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-200/50 rounded-full">
+                                                                <MoreHorizontal className="h-4 w-4" />
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end" className="w-48 p-1">
+                                                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                            <DropdownMenuSeparator />
+                                                            <DropdownMenuItem onClick={() => handleEdit(job)} className="cursor-pointer">
+                                                                <Pencil className="mr-2 h-4 w-4 text-slate-400" />
+                                                                <span>Edit Details</span>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem className="cursor-pointer">
+                                                                <ArrowUpRight className="mr-2 h-4 w-4 text-slate-400" />
+                                                                <span>View Details</span>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuSeparator />
+                                                            <DropdownMenuItem
+                                                                onClick={() => setJobToDelete(job)}
+                                                                className="text-rose-600 focus:bg-rose-50 focus:text-rose-600 cursor-pointer"
+                                                            >
+                                                                <Trash2 className="mr-2 h-4 w-4" />
+                                                                <span>Delete Job</span>
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                </TableCell>
+                                            </motion.tr>
+                                        ))}
+                                    </AnimatePresence>
                                 )}
                             </TableBody>
                         </Table>
@@ -444,8 +493,12 @@ export default function Jobs() {
                         </div>
 
                         <SheetFooter className="pt-8">
-                            <Button type="submit" className="w-full h-12 rounded-xl shadow-2xl shadow-primary/20 font-black uppercase text-xs tracking-[0.2em] bg-cryshield-gradient hover:opacity-90 text-white border-0 transition-all">
-                                {editingJob ? 'Finalize Synthesis' : 'Deploy Deployment'}
+                            <Button
+                                type="submit"
+                                disabled={saveMutation.isPending}
+                                className="w-full h-12 rounded-xl shadow-2xl shadow-primary/20 font-black uppercase text-xs tracking-[0.2em] bg-cryshield-gradient hover:opacity-90 text-white border-0 transition-all"
+                            >
+                                {saveMutation.isPending ? 'Deploying...' : editingJob ? 'Finalize Synthesis' : 'Deploy Deployment'}
                             </Button>
                         </SheetFooter>
                     </form>

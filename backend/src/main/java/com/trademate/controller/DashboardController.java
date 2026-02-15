@@ -3,6 +3,7 @@ package com.trademate.controller;
 import com.trademate.model.Job;
 import com.trademate.service.JobService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,15 +25,14 @@ public class DashboardController {
     private final JobService jobService;
 
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getDashboardStats(@AuthenticationPrincipal UserDetails userDetails) {
+    @Cacheable(value = "dashboardStats", key = "#userDetails.username")
+    public Map<String, Object> getDashboardStats(@AuthenticationPrincipal UserDetails userDetails) {
         List<Job> allJobs = jobService.getJobs(userDetails.getUsername());
 
-        // Simple memory calculation for MVP. In production, use DB queries.
         long totalJobs = allJobs.size();
         long pendingJobs = allJobs.stream().filter(j -> "PENDING".equals(j.getStatus().name())).count();
         long completedJobs = allJobs.stream().filter(j -> "COMPLETED".equals(j.getStatus().name())).count();
 
-        // Today's jobs
         LocalDate today = LocalDate.now();
         List<Job> todayJobs = allJobs.stream()
                 .filter(j -> j.getScheduledDate() != null && j.getScheduledDate().toLocalDate().equals(today))
@@ -44,6 +44,6 @@ public class DashboardController {
         stats.put("completedJobs", completedJobs);
         stats.put("todayJobs", todayJobs);
 
-        return ResponseEntity.ok(stats);
+        return stats;
     }
 }
