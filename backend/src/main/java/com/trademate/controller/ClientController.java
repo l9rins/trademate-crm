@@ -29,13 +29,14 @@ public class ClientController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Client> updateClient(@PathVariable Long id, @RequestBody Client client) {
-        return ResponseEntity.ok(clientService.updateClient(id, client));
+    public ResponseEntity<Client> updateClient(@AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long id, @RequestBody Client client) {
+        return ResponseEntity.ok(clientService.updateClient(userDetails.getUsername(), id, client));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteClient(@PathVariable Long id) {
-        clientService.deleteClient(id);
+    public ResponseEntity<Void> deleteClient(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id) {
+        clientService.deleteClient(userDetails.getUsername(), id);
         return ResponseEntity.noContent().build();
     }
 }

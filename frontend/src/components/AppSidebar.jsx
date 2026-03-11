@@ -34,6 +34,7 @@ export function AppSidebar() {
         { title: "Dashboard", url: "/", icon: LayoutDashboard },
         { title: "Clients", url: "/clients", icon: Users },
         { title: "Jobs", url: "/jobs", icon: Briefcase },
+        { title: "Caelum", url: "/caelum", icon: Command },
     ]
 
     return (
