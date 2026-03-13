@@ -25,7 +25,7 @@ public class DashboardController {
     private final JobService jobService;
 
     @GetMapping
-    @Cacheable(value = "dashboardStats", key = "#p0.username")
+    @Cacheable(value = "dashboardStats", key = "#userDetails.username")
     public Map<String, Object> getDashboardStats(@AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails == null) {
             throw new RuntimeException("User not authenticated");
