@@ -18,7 +18,7 @@ api.interceptors.response.use(
     async (error) => {
         const { config, response } = error;
         
-        if (!response && config && !config._retry) {
+        if (!response && config && !config._retry && config.method === 'get') {
             config._retry = true;
             return api(config);
         }
@@ -26,7 +26,13 @@ api.interceptors.response.use(
         if (response?.status === 401) {
             localStorage.removeItem('user');
             localStorage.removeItem('token');
-            window.location.href = '/login';
+            // toast is already used in other files via sonner, we can use it here if we import it, 
+            // but api.js is a lib file. I'll import toast.
+            const { toast } = await import('sonner');
+            toast.error("Session expired", { description: "Please sign in again." });
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 1500);
         }
         return Promise.reject(error);
     }

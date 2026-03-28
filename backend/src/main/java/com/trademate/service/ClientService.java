@@ -4,6 +4,7 @@ import com.trademate.model.Client;
 import com.trademate.repository.ClientRepository;
 import com.trademate.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ public class ClientService {
         return clientRepository.findByUserId(user.getId());
     }
 
+    @CacheEvict(value = "dashboardStats", key = "#username")
     public Client createClient(String username, Client clientRequest) {
         var user = userRepository.findByUsername(username).orElseThrow();
         clientRequest.setUser(user);
@@ -28,6 +30,7 @@ public class ClientService {
         return clientRepository.save(clientRequest);
     }
 
+    @CacheEvict(value = "dashboardStats", allEntries = true)
     public Client updateClient(Long id, Client clientRequest) {
         var client = clientRepository.findById(id).orElseThrow(() -> new RuntimeException("Client not found"));
         client.setName(clientRequest.getName());
@@ -38,6 +41,7 @@ public class ClientService {
         return clientRepository.save(client);
     }
 
+    @CacheEvict(value = "dashboardStats", allEntries = true)
     public void deleteClient(Long id) {
         clientRepository.deleteById(id);
     }
