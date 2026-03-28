@@ -107,7 +107,9 @@ export default function Login() {
                                 <div className="space-y-2">
                                     <div className="flex items-center justify-between px-0.5">
                                         <Label htmlFor="password" className="text-xs font-semibold text-slate-600">Password</Label>
-                                        <a href="#" className="text-xs font-semibold text-teal-600 hover:text-teal-700 transition-colors">Forgot password?</a>
+                                        <span className="text-xs font-semibold text-slate-400 cursor-not-allowed" title="Coming soon">
+                                            Forgot password?
+                                        </span>
                                     </div>
                                     <div className="relative group">
                                         <div className="absolute left-3 top-3 h-5 w-5 text-muted-foreground group-focus-within:text-teal-500 transition-colors pointer-events-none">
@@ -144,11 +146,11 @@ export default function Login() {
                                 </div>
                             </div>
 
-                            <Button variant="outline" type="button" className="w-full h-11 rounded-xl font-semibold border-slate-200/80 hover:bg-white/60 transition-all bg-white/50 backdrop-blur-sm">
+                            <Button variant="outline" type="button" disabled className="w-full h-11 rounded-xl font-semibold opacity-50 cursor-not-allowed border-slate-200/80 bg-white/50 backdrop-blur-sm">
                                 <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
                                     <path fill="#4285F4" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path>
                                 </svg>
-                                Google
+                                Google Sign-In coming soon
                             </Button>
                         </form>
                     </CardContent>

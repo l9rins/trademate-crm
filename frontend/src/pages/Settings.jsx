@@ -7,14 +7,52 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { User, Shield, Bell, CreditCard, Save } from "lucide-react";
 import { toast } from "sonner";
+import { useState } from 'react';
+import api from '@/lib/api';
 
 export default function Settings() {
     const { user } = useAuth();
 
-    const handleSave = () => {
-        toast.success("Profile Updated", {
-            description: "Your workspace preferences have been synchronized."
-        });
+    // Profile state
+    const [username, setUsername] = useState(user?.username || '');
+    const [email, setEmail] = useState(user?.email || '');
+    const [isSaving, setIsSaving] = useState(false);
+
+    // Password state
+    const [currentPw, setCurrentPw] = useState('');
+    const [newPw, setNewPw] = useState('');
+    const [pwSaving, setPwSaving] = useState(false);
+
+    const handleSave = async () => {
+        setIsSaving(true);
+        try {
+            await api.put('/users/me', { username, email });
+            toast.success("Profile Updated", {
+                description: "Your changes have been saved."
+            });
+        } catch {
+            toast.error("Failed to save", { description: "Please try again." });
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handlePasswordChange = async () => {
+        if (!currentPw || !newPw) {
+            toast.error("Both fields required");
+            return;
+        }
+        setPwSaving(true);
+        try {
+            await api.put('/users/me/password', { currentPassword: currentPw, newPassword: newPw });
+            toast.success("Password updated");
+            setCurrentPw('');
+            setNewPw('');
+        } catch {
+            toast.error("Incorrect password or server error");
+        } finally {
+            setPwSaving(false);
+        }
     };
 
     return (
@@ -52,19 +90,20 @@ export default function Settings() {
                                     <div className="flex flex-col md:flex-row gap-6">
                                         <div className="space-y-2 flex-1">
                                             <Label htmlFor="username" className="text-sm font-bold text-foreground/80">Username</Label>
-                                            <Input id="username" defaultValue={user?.username} className="border-border h-11 bg-background/50" />
+                                            <Input id="username" value={username} onChange={e => setUsername(e.target.value)} className="border-border h-11 bg-background/50" />
                                         </div>
                                         <div className="space-y-2 flex-1">
                                             <Label htmlFor="email" className="text-sm font-bold text-foreground/80">Email Address</Label>
-                                            <Input id="email" type="email" defaultValue={user?.email} className="border-border h-11 bg-background/50" />
+                                            <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} className="border-border h-11 bg-background/50" />
                                         </div>
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="bio" className="text-sm font-bold text-foreground/80">Professional Bio</Label>
                                         <Input id="bio" placeholder="e.g. Master Plumber at TradeMate Solutions" className="border-border h-11 bg-background/50" />
                                     </div>
-                                    <Button onClick={handleSave} className="bg-cryshield-gradient hover:opacity-90 rounded-xl px-8 h-11 font-black uppercase text-xs tracking-widest shadow-lg shadow-primary/20 border-0 text-white">
-                                        <Save className="mr-2 h-4 w-4" /> Save Changes
+                                    <Button onClick={handleSave} disabled={isSaving} className="bg-cryshield-gradient hover:opacity-90 rounded-xl px-8 h-11 font-black uppercase text-xs tracking-widest shadow-lg shadow-primary/20 border-0 text-white">
+                                        <Save className="mr-2 h-4 w-4" /> 
+                                        {isSaving ? 'Saving...' : 'Save Changes'}
                                     </Button>
                                 </div>
                             </CardContent>
@@ -82,14 +121,26 @@ export default function Settings() {
                             <div className="space-y-6 max-w-md">
                                 <div className="space-y-2">
                                     <Label className="text-sm font-bold text-foreground/80">Current Password</Label>
-                                    <Input type="password" placeholder="••••••••" className="border-border h-11 bg-background/50" />
+                                    <Input 
+                                        type="password" 
+                                        value={currentPw} 
+                                        onChange={e => setCurrentPw(e.target.value)} 
+                                        placeholder="••••••••" 
+                                        className="border-border h-11 bg-background/50" 
+                                    />
                                 </div>
                                 <div className="space-y-2">
                                     <Label className="text-sm font-bold text-foreground/80">New Password</Label>
-                                    <Input type="password" placeholder="Enter new password" className="border-border h-11 bg-background/50" />
+                                    <Input 
+                                        type="password" 
+                                        value={newPw} 
+                                        onChange={e => setNewPw(e.target.value)} 
+                                        placeholder="Enter new password" 
+                                        className="border-border h-11 bg-background/50" 
+                                    />
                                 </div>
-                                <Button className="bg-foreground hover:bg-foreground/90 text-background rounded-xl px-8 h-11 font-bold">
-                                    Update Credentials
+                                <Button onClick={handlePasswordChange} disabled={pwSaving} className="bg-foreground hover:bg-foreground/90 text-background rounded-xl px-8 h-11 font-bold">
+                                    {pwSaving ? 'Updating...' : 'Update Credentials'}
                                 </Button>
                             </div>
                         </CardContent>

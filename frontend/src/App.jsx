@@ -7,7 +7,6 @@ import Dashboard from './pages/Dashboard';
 import Clients from './pages/Clients';
 import Jobs from './pages/Jobs';
 import Settings from './pages/Settings';
-import Caelum from './pages/Caelum';
 import { useAuth } from './context/AuthContext';
 
 const PrivateRoute = ({ children }) => {
@@ -47,7 +46,6 @@ function App() {
         <Route path="jobs" element={<Jobs />} />
         <Route path="clients" element={<Clients />} />
         <Route path="settings" element={<Settings />} />
-        <Route path="caelum" element={<Caelum />} />
       </Route>
     </Routes>
   );

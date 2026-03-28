@@ -7,7 +7,6 @@ import {
     LogOut,
     PlusCircle,
     Search,
-    Command
 } from "lucide-react"
 
 import {
@@ -34,7 +33,6 @@ export function AppSidebar() {
         { title: "Dashboard", url: "/", icon: LayoutDashboard },
         { title: "Clients", url: "/clients", icon: Users },
         { title: "Jobs", url: "/jobs", icon: Briefcase },
-        { title: "Caelum", url: "/caelum", icon: Command },
     ]
 
     return (
@@ -110,7 +108,7 @@ export function AppSidebar() {
                     <SidebarMenuButton
                         onClick={logout}
                         tooltip="Logout"
-                        className="ml-auto w-10 h-10 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 group-data-[collapsible=icon]:hidden rounded-xl"
+                        className="ml-auto w-10 h-10 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-xl"
                     >
                         <LogOut className="h-5 w-5" />
                     </SidebarMenuButton>
