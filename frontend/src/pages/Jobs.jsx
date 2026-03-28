@@ -498,7 +498,7 @@ export default function Jobs() {
                                 disabled={saveMutation.isPending}
                                 className="w-full h-12 rounded-xl shadow-2xl shadow-primary/20 font-black uppercase text-xs tracking-[0.2em] bg-cryshield-gradient hover:opacity-90 text-white border-0 transition-all"
                             >
-                                {saveMutation.isPending ? 'Deploying...' : editingJob ? 'Finalize Synthesis' : 'Deploy Deployment'}
+                                {saveMutation.isPending ? 'Saving...' : editingJob ? 'Save Changes' : 'Create Job'}
                             </Button>
                         </SheetFooter>
                     </form>

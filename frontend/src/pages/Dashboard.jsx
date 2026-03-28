@@ -40,6 +40,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useAuth } from '../context/AuthContext';
 
 // Sample chart data - in a real app this would come from the API
 const chartData = [
@@ -154,6 +155,8 @@ export default function Dashboard() {
         retry: 1,
     });
 
+    const { user } = useAuth();
+
     // Fallback stats to prevent crash if apiData is undefined
     const stats = apiData || {
         totalJobs: 0,
@@ -184,10 +187,10 @@ export default function Dashboard() {
     }
 
     const metrics = [
-        { title: "Total Active Jobs", value: stats.totalJobs || 0, subtext: "Jobs currently in pipeline", icon: Briefcase, trend: "up", trendValue: "+12.5%" },
-        { title: "Pending Review", value: stats.pendingJobs || 0, subtext: "Awaiting client approval", icon: Clock, trend: "down", trendValue: "-2%" },
-        { title: "Completed Jobs", value: stats.completedJobs || 0, subtext: "Total finished this month", icon: CheckCircle2, trend: "up", trendValue: "+5.2%" },
-        { title: "Retention Rate", value: "98.2%", subtext: "Customer satisfaction score", icon: Users },
+        { title: "Total Active Jobs", value: stats.totalJobs || 0, subtext: "Jobs currently in pipeline", icon: Briefcase },
+        { title: "Pending Review", value: stats.pendingJobs || 0, subtext: "Awaiting client approval", icon: Clock },
+        { title: "Completed Jobs", value: stats.completedJobs || 0, subtext: "Total finished this month", icon: CheckCircle2 },
+        { title: "Total Clients", value: stats.totalClients || 0, subtext: "Registered in CRM", icon: Users },
     ];
 
     return (
@@ -195,7 +198,7 @@ export default function Dashboard() {
             <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                 <div>
                     <h1 className="text-4xl font-black tracking-tighter text-foreground uppercase">
-                        Welcome, <span className="text-cryshield-gradient">Lorenz</span>
+                        Welcome, <span className="text-cryshield-gradient">{user?.username || 'there'}</span>
                     </h1>
                     <div className="flex items-center gap-3">
                         <p className="text-muted-foreground font-bold uppercase tracking-widest text-xs opacity-70">Workspace Vitality: <span className="text-primary">Optimized</span></p>
@@ -341,17 +344,6 @@ export default function Dashboard() {
                     <CardContent className="p-0">
                         {(() => {
                             const activities = [...(stats.todayJobs || [])];
-
-                            const mockData = [
-                                { id: 'm1', title: 'System Maintenance', status: 'COMPLETED', clientName: 'Admin', scheduledDate: new Date(Date.now() - 3600000 * 2), isMock: true },
-                                { id: 'm2', title: 'Invoice Generated', status: 'PENDING', clientName: 'Finance', scheduledDate: new Date(Date.now() - 3600000 * 5), isMock: true },
-                                { id: 'm3', title: 'New Client Onboarded', status: 'COMPLETED', clientName: 'Sales', scheduledDate: new Date(Date.now() - 3600000 * 12), isMock: true },
-                                { id: 'm4', title: 'Welcome Email Sent', status: 'COMPLETED', clientName: 'System', scheduledDate: new Date(Date.now() - 3600000 * 24), isMock: true },
-                            ];
-
-                            while (activities.length < 5 && mockData.length > 0) {
-                                activities.push(mockData.shift());
-                            }
 
                             return (
                                 <ScrollArea className="h-[350px] px-6">

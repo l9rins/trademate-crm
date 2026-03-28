@@ -16,6 +16,7 @@ import {
     FileText,
     ArrowUpRight
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Input } from "@/components/ui/input"
@@ -70,6 +71,7 @@ export default function Clients() {
     const [isSheetOpen, setIsSheetOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [clientToDelete, setClientToDelete] = useState(null);
+    const navigate = useNavigate();
 
     // React Query SWR fetch
     const { data: clients = [], isLoading } = useQuery({
@@ -299,7 +301,10 @@ export default function Clients() {
                                                                 <Pencil className="mr-2 h-4 w-4 text-muted-foreground" />
                                                                 <span>Edit Profile</span>
                                                             </DropdownMenuItem>
-                                                            <DropdownMenuItem className="cursor-pointer">
+                                                            <DropdownMenuItem 
+                                                                onClick={() => navigate(`/jobs?client=${client.id}`)}
+                                                                className="cursor-pointer"
+                                                            >
                                                                 <ArrowUpRight className="mr-2 h-4 w-4 text-muted-foreground" />
                                                                 <span>View Jobs</span>
                                                             </DropdownMenuItem>
@@ -337,11 +342,17 @@ export default function Clients() {
                         <div className="space-y-2">
                             <Label htmlFor="name" className="text-sm font-bold text-foreground/80">Client Name</Label>
                             <Input id="name" placeholder="e.g. John Doe Plumbing" className="border-border focus:ring-primary/20" {...formik.getFieldProps('name')} />
+                            {formik.touched.name && formik.errors.name && (
+                                <p className="text-xs font-medium text-rose-500">{formik.errors.name}</p>
+                            )}
                         </div>
 
                         <div className="space-y-2">
                             <Label htmlFor="email" className="text-sm font-bold text-foreground/80">Email Address</Label>
                             <Input id="email" type="email" placeholder="john@example.com" className="border-border focus:ring-primary/20" {...formik.getFieldProps('email')} />
+                            {formik.touched.email && formik.errors.email && (
+                                <p className="text-xs font-medium text-rose-500">{formik.errors.email}</p>
+                            )}
                         </div>
 
                         <div className="space-y-2">
