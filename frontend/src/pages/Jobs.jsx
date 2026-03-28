@@ -17,6 +17,7 @@ import {
     ArrowUpRight,
     Filter
 } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { format } from "date-fns"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -85,6 +86,16 @@ export default function Jobs() {
     const [isSheetOpen, setIsSheetOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [jobToDelete, setJobToDelete] = useState(null);
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    // ⚡ Auto-open sheet if ?new=true is present
+    React.useEffect(() => {
+        if (searchParams.get('new') === 'true') {
+            openNewJobSheet();
+            // Clear the param without breaking navigation history
+            setSearchParams({}, { replace: true });
+        }
+    }, [searchParams]);
 
     // ⚡ React Query — SWR for jobs
     const { data: jobs = [], isLoading: loading } = useQuery({

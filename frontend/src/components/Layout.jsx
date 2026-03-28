@@ -5,6 +5,7 @@ import { GlobalSearch } from "./GlobalSearch"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "./AppSidebar"
 import { Bell, HelpCircle } from "lucide-react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "./ModeToggle"
 import { motion, AnimatePresence } from "framer-motion";
@@ -34,10 +35,22 @@ export default function Layout() {
 
                     <div className="flex items-center gap-2">
                         <ModeToggle />
-                        <Button variant="ghost" size="icon" className="text-muted-foreground rounded-xl h-9 w-9 hover:bg-muted transition-all">
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => toast.info("Notifications coming soon", {
+                                description: "The message center is currently being initialized."
+                            })}
+                            className="text-muted-foreground rounded-xl h-9 w-9 hover:bg-muted transition-all"
+                        >
                             <Bell className="h-5 w-5" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="text-muted-foreground rounded-xl h-9 w-9 hover:bg-muted transition-all">
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => window.location.href = 'mailto:support@trademate.com'}
+                            className="text-muted-foreground rounded-xl h-9 w-9 hover:bg-muted transition-all"
+                        >
                             <HelpCircle className="h-5 w-5" />
                         </Button>
                     </div>

@@ -33,6 +33,10 @@ export function GlobalSearch() {
                 e.preventDefault()
                 setOpen((open) => !open)
             }
+            if (e.key === "s" && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault()
+                navigate("/settings")
+            }
         }
 
         document.addEventListener("keydown", down)
@@ -77,7 +81,7 @@ export function GlobalSearch() {
                     </CommandGroup>
                     <CommandSeparator />
                     <CommandGroup heading="Actions">
-                        <CommandItem onSelect={() => runCommand(() => navigate("/jobs"))}>
+                        <CommandItem onSelect={() => runCommand(() => navigate("/jobs?new=true"))}>
                             <PlusCircle className="mr-2 h-4 w-4" />
                             <span>New Job Request</span>
                         </CommandItem>

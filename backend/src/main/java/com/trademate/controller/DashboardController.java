@@ -1,6 +1,7 @@
 package com.trademate.controller;
 
 import com.trademate.model.Job;
+import com.trademate.service.ClientService;
 import com.trademate.service.JobService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 public class DashboardController {
 
     private final JobService jobService;
+    private final ClientService clientService;
 
     @GetMapping
     @Cacheable(value = "dashboardStats", key = "#userDetails.username")
@@ -41,11 +43,14 @@ public class DashboardController {
                 .filter(j -> j.getScheduledDate() != null && j.getScheduledDate().toLocalDate().equals(today))
                 .collect(Collectors.toList());
 
+        long totalClients = clientService.getClients(userDetails.getUsername()).size();
+
         Map<String, Object> stats = new HashMap<>();
         stats.put("totalJobs", totalJobs);
         stats.put("pendingJobs", pendingJobs);
         stats.put("completedJobs", completedJobs);
         stats.put("todayJobs", todayJobs);
+        stats.put("totalClients", totalClients);
 
         return stats;
     }
