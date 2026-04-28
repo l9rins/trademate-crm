@@ -1,13 +1,13 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Layout from './components/Layout';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import Clients from './pages/Clients';
-import Jobs from './pages/Jobs';
-import Settings from './pages/Settings';
-import { useAuth } from './context/AuthContext';
+import Layout from './shared/components/Layout';
+import LoginPage from './features/auth/LoginPage';
+import RegisterPage from './features/auth/RegisterPage';
+import DashboardPage from './features/dashboard/DashboardPage';
+import ClientsPage from './features/clients/ClientsPage';
+import JobsPage from './features/jobs/JobsPage';
+import SettingsPage from './features/settings/SettingsPage';
+import { useAuth } from './features/auth/AuthContext';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -34,18 +34,18 @@ const PrivateRoute = ({ children }) => {
 function App() {
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
 
       <Route path="/" element={
         <PrivateRoute>
           <Layout />
         </PrivateRoute>
       }>
-        <Route index element={<Dashboard />} />
-        <Route path="jobs" element={<Jobs />} />
-        <Route path="clients" element={<Clients />} />
-        <Route path="settings" element={<Settings />} />
+        <Route index element={<DashboardPage />} />
+        <Route path="jobs" element={<JobsPage />} />
+        <Route path="clients" element={<ClientsPage />} />
+        <Route path="settings" element={<SettingsPage />} />
       </Route>
     </Routes>
   );
