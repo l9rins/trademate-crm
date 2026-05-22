@@ -8,11 +8,14 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface JobRepository extends JpaRepository<Job, Long> {
     List<Job> findByUserId(UUID userId);
+
+    Optional<Job> findByIdAndUserId(Long id, UUID userId);
 
     List<Job> findByUserIdAndStatus(UUID userId, JobStatus status);
 

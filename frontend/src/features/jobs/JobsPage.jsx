@@ -120,7 +120,7 @@ export default function Jobs() {
                 description: "The job could not be deleted at this time."
             });
         },
-        onSuccess: (_, id) => {
+        onSuccess: () => {
             toast.success("Job decommissioned", {
                 description: `Job has been removed from the pipeline.`
             });

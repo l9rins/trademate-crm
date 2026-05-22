@@ -41,7 +41,7 @@ export function GlobalSearch() {
 
         document.addEventListener("keydown", down)
         return () => document.removeEventListener("keydown", down)
-    }, [])
+    }, [navigate])
 
     const runCommand = React.useCallback((command) => {
         setOpen(false)

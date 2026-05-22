@@ -27,13 +27,14 @@ public class JobController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Job> updateJob(@PathVariable Long id, @RequestBody Job job) {
-        return ResponseEntity.ok(jobService.updateJob(id, job));
+    public ResponseEntity<Job> updateJob(@AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long id, @RequestBody Job job) {
+        return ResponseEntity.ok(jobService.updateJob(userDetails.getUsername(), id, job));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteJob(@PathVariable Long id) {
-        jobService.deleteJob(id);
+    public ResponseEntity<Void> deleteJob(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id) {
+        jobService.deleteJob(userDetails.getUsername(), id);
         return ResponseEntity.noContent().build();
     }
 }

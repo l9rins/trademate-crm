@@ -485,11 +485,6 @@ const SidebarMenuBadge = React.forwardRef(({ className, ...props }, ref) => {
 SidebarMenuBadge.displayName = "SidebarMenuBadge"
 
 const SidebarMenuSkeleton = React.forwardRef(({ className, showIcon = false, ...props }, ref) => {
-    // Random width between 50% and 90%
-    const width = React.useMemo(() => {
-        return `${Math.floor(Math.random() * 40) + 50}%`
-    }, [])
-
     return (
         <div
             ref={ref}
@@ -501,7 +496,7 @@ const SidebarMenuSkeleton = React.forwardRef(({ className, showIcon = false, ...
             <div
                 className="h-4 flex-1 max-w-[--skeleton-width] rounded-md bg-sidebar-accent/50"
                 style={{
-                    "--skeleton-width": width,
+                    "--skeleton-width": "72%",
                 }}
             />
         </div>

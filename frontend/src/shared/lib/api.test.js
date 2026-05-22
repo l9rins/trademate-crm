@@ -51,7 +51,7 @@ describe('API Client Configuration', () => {
 
     it('should attach Bearer token from localStorage to requests', async () => {
         const axios = (await import('axios')).default;
-        const apiModule = await import('../../shared/lib/api');
+        await import('../../shared/lib/api');
 
         // Get the created instance
         const instance = axios.create.mock.results[0]?.value;

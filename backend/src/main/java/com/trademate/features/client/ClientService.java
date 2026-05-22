@@ -2,6 +2,7 @@ package com.trademate.features.client;
 
 import com.trademate.features.client.model.Client;
 import com.trademate.features.auth.UserRepository;
+import com.trademate.shared.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -29,9 +30,11 @@ public class ClientService {
         return clientRepository.save(clientRequest);
     }
 
-    @CacheEvict(value = "dashboardStats", allEntries = true)
-    public Client updateClient(Long id, Client clientRequest) {
-        var client = clientRepository.findById(id).orElseThrow(() -> new RuntimeException("Client not found"));
+    @CacheEvict(value = "dashboardStats", key = "#username")
+    public Client updateClient(String username, Long id, Client clientRequest) {
+        var user = userRepository.findByUsername(username).orElseThrow();
+        var client = clientRepository.findByIdAndUserId(id, user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Client not found with ID: " + id));
         client.setName(clientRequest.getName());
         client.setEmail(clientRequest.getEmail());
         client.setPhone(clientRequest.getPhone());
@@ -40,8 +43,11 @@ public class ClientService {
         return clientRepository.save(client);
     }
 
-    @CacheEvict(value = "dashboardStats", allEntries = true)
-    public void deleteClient(Long id) {
-        clientRepository.deleteById(id);
+    @CacheEvict(value = "dashboardStats", key = "#username")
+    public void deleteClient(String username, Long id) {
+        var user = userRepository.findByUsername(username).orElseThrow();
+        var client = clientRepository.findByIdAndUserId(id, user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Client not found with ID: " + id));
+        clientRepository.delete(client);
     }
 }

@@ -52,12 +52,12 @@ const SheetContent = React.forwardRef(({ side = "right", className, children, ..
 ))
 SheetContent.displayName = DialogPrimitive.Content.displayName
 
-const SheetHeader = ({ className, ...props }) => (
+const SheetHeader = (props) => (
   <div className="flex flex-col space-y-2 text-center sm:text-left" {...props} />
 )
 SheetHeader.displayName = "SheetHeader"
 
-const SheetFooter = ({ className, ...props }) => (
+const SheetFooter = (props) => (
   <div className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2" {...props} />
 )
 SheetFooter.displayName = "SheetFooter"

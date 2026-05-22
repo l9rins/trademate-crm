@@ -32,7 +32,7 @@ public class JobService {
 
         // Safe client lookup — throws 404 instead of silently passing null
         if (jobRequest.getClient() != null && jobRequest.getClient().getId() != null) {
-            jobRequest.setClient(clientRepository.findById(jobRequest.getClient().getId())
+            jobRequest.setClient(clientRepository.findByIdAndUserId(jobRequest.getClient().getId(), user.getId())
                     .orElseThrow(() -> new EntityNotFoundException(
                             "Client not found with ID: " + jobRequest.getClient().getId())));
         }
@@ -45,9 +45,10 @@ public class JobService {
         return jobRepository.save(jobRequest);
     }
 
-    @CacheEvict(value = "dashboardStats", allEntries = true)
-    public Job updateJob(Long id, Job jobRequest) {
-        var job = jobRepository.findById(id)
+    @CacheEvict(value = "dashboardStats", key = "#username")
+    public Job updateJob(String username, Long id, Job jobRequest) {
+        var user = userRepository.findByUsername(username).orElseThrow();
+        var job = jobRepository.findByIdAndUserId(id, user.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Job not found with ID: " + id));
         job.setTitle(jobRequest.getTitle());
         job.setDescription(jobRequest.getDescription());
@@ -59,8 +60,11 @@ public class JobService {
         return jobRepository.save(job);
     }
 
-    @CacheEvict(value = "dashboardStats", allEntries = true)
-    public void deleteJob(Long id) {
-        jobRepository.deleteById(id);
+    @CacheEvict(value = "dashboardStats", key = "#username")
+    public void deleteJob(String username, Long id) {
+        var user = userRepository.findByUsername(username).orElseThrow();
+        var job = jobRepository.findByIdAndUserId(id, user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Job not found with ID: " + id));
+        jobRepository.delete(job);
     }
 }

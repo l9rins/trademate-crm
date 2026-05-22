@@ -29,7 +29,7 @@ describe('JobsPage', () => {
     beforeEach(() => vi.clearAllMocks());
 
     it('renders title', async () => {
-        api.get.mockImplementation(u => Promise.resolve({ data: [] }));
+        api.get.mockImplementation(() => Promise.resolve({ data: [] }));
         render(<JobsPage />, { wrapper: wrap() });
         expect(screen.getByText('Job')).toBeTruthy();
     });

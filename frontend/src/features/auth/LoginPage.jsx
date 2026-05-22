@@ -29,7 +29,7 @@ export default function Login() {
                 description: "You've successfully signed in to TradeMate CRM.",
             });
             navigate('/');
-        } catch (err) {
+        } catch {
             toast.error("Authentication failed", {
                 description: "The credentials you provided do not match our records.",
             });
