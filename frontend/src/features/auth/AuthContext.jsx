@@ -1,21 +1,23 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useMemo, useState } from 'react';
 import api from '../../shared/lib/api';
 
 const AuthContext = createContext(null);
 
-export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+const getStoredUser = () => {
+    const token = localStorage.getItem('token');
+    const savedUser = localStorage.getItem('user');
+    if (!token || !savedUser) return null;
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const savedUser = localStorage.getItem('user');
-        if (token && savedUser) {
-            // Optionally verify token with backend here
-            setUser(JSON.parse(savedUser));
-        }
-        setLoading(false);
-    }, []);
+    try {
+        return JSON.parse(savedUser);
+    } catch {
+        localStorage.removeItem('user');
+        return null;
+    }
+};
+
+export const AuthProvider = ({ children }) => {
+    const [user, setUser] = useState(getStoredUser);
 
     const login = async (username, password) => {
         // Backend expects 'username' key in JSON.
@@ -48,9 +50,17 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
     };
 
+    const value = useMemo(() => ({
+        user,
+        login,
+        register,
+        logout,
+        loading: false,
+    }), [user]);
+
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, loading }}>
-            {!loading && children}
+        <AuthContext.Provider value={value}>
+            {children}
         </AuthContext.Provider>
     );
 };

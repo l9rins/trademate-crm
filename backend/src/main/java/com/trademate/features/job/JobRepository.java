@@ -16,6 +16,10 @@ public interface JobRepository extends JpaRepository<Job, Long> {
 
     List<Job> findByUserIdAndStatus(UUID userId, JobStatus status);
 
+    long countByUserId(UUID userId);
+
+    long countByUserIdAndStatus(UUID userId, JobStatus status);
+
     @Query("SELECT j FROM Job j WHERE j.user.id = :userId AND j.scheduledDate BETWEEN :start AND :end")
     List<Job> findJobsForDateRange(UUID userId, LocalDateTime start, LocalDateTime end);
 }

@@ -89,14 +89,6 @@ export default function Jobs() {
     const [searchParams, setSearchParams] = useSearchParams();
 
     // ⚡ Auto-open sheet if ?new=true is present
-    React.useEffect(() => {
-        if (searchParams.get('new') === 'true') {
-            openNewJobSheet();
-            // Clear the param without breaking navigation history
-            setSearchParams({}, { replace: true });
-        }
-    }, [searchParams]);
-
     // ⚡ React Query — SWR for jobs
     const { data: jobs = [], isLoading: loading } = useQuery({
         queryKey: ['jobs'],
@@ -234,16 +226,24 @@ export default function Jobs() {
         setIsSheetOpen(true);
     };
 
-    const openNewJobSheet = () => {
+    const openNewJobSheet = React.useCallback(() => {
         setEditingJob(null);
         formik.resetForm();
         setIsSheetOpen(true);
-    }
+    }, [formik]);
+
+    React.useEffect(() => {
+        if (searchParams.get('new') === 'true') {
+            openNewJobSheet();
+            setSearchParams({}, { replace: true });
+        }
+    }, [openNewJobSheet, searchParams, setSearchParams]);
 
     const filteredJobs = jobs.filter(job =>
-        job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (job.client?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (job.address || '').toLowerCase().includes(searchTerm.toLowerCase())
+        (!searchParams.get('client') || job.client?.id?.toString() === searchParams.get('client')) &&
+        (job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (job.client?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (job.address || '').toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
     return (
